@@ -1,20 +1,18 @@
 import pandas as pd
 import numpy as np
 
-import seaborn as sns
 import plotly.express as px
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+import streamlit as st
 
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-import textwrap
-import matplotlib.ticker as ticker
+st.title("HBO DASHBOARD")
 
+# Stats data load
 pd.options.display.float_format = '{:,.2f}'.format
 stats_2023 = pd.read_csv('Statistika_na_uspewaemostta_BEL_MAT.csv')
 stats_2022 = pd.read_csv('statistika_mat_bel_2022.csv')
 
-# Stats clean-up
+# Stats data clean-up
 stats_2023_clean = stats_2023.rename(columns={
                            "Статистика за успеваемостта, НВО 7. клас": "Категория точки",
                            "Unnamed: 1": "БЕЛ",
@@ -31,8 +29,10 @@ stats_2023_clean = stats_2023_clean.drop([0, 1, 2], axis=0)
 stats_2023_clean = stats_2023_clean.fillna(0)
 stats_2023_clean[['общо', 'общо_м', 'общо_ж', 'МАТ', 'МАТ_м', 'МАТ_ж', 'БЕЛ', 'БЕЛ_м', 'БЕЛ_ж']] = stats_2023_clean[['общо', 'общо_м', 'общо_ж', 'МАТ', 'МАТ_м', 'МАТ_ж', 'БЕЛ', 'БЕЛ_м', 'БЕЛ_ж']].astype(int)
 stats_2023_clean.reset_index(drop=True, inplace=True)
-stats_2023_clean["ТОЧКИ"] = pd.Series(np.arange(0,201,0.5))
+stats_2023_clean["ТОЧКИ"] = pd.Series(np.arange(0, 201, 0.5))
 stats_2023_clean["Година"] = "2023"
+stats_2023_clean['Bin'] = pd.cut(stats_2023_clean.ТОЧКИ, bins=20, include_lowest=True)
+stats_2023_clean['Bin'] = stats_2023_clean['Bin'].apply(lambda x: f"{x.left:.1f} - {x.right:.1f}")
 
 stats_2022_clean = stats_2022.rename(columns={
                            "Статистика за успеваемостта, НВО 7. клас, 2022 г.": "Категория точки",
@@ -50,38 +50,54 @@ stats_2022_clean = stats_2022_clean.drop([0, 1, 2], axis=0)
 stats_2022_clean = stats_2022_clean.fillna(0)
 stats_2022_clean[['общо', 'общо_м', 'общо_ж', 'МАТ', 'МАТ_м', 'МАТ_ж', 'БЕЛ', 'БЕЛ_м', 'БЕЛ_ж']] = stats_2022_clean[['общо', 'общо_м', 'общо_ж', 'МАТ', 'МАТ_м', 'МАТ_ж', 'БЕЛ', 'БЕЛ_м', 'БЕЛ_ж']].astype(int)
 stats_2022_clean.reset_index(drop=True, inplace=True)
-stats_2022_clean["ТОЧКИ"] = pd.Series(np.arange(0,201,0.5))
+stats_2022_clean["ТОЧКИ"] = pd.Series(np.arange(0, 201, 0.5))
 stats_2022_clean["Година"] = "2022"
+stats_2022_clean['Bin'] = pd.cut(stats_2022_clean.ТОЧКИ, bins=20, include_lowest=True)
+stats_2022_clean['Bin'] = stats_2022_clean['Bin'].apply(lambda x: f"{x.left:.1f} - {x.right:.1f}")
 
-df_combined_2 = pd.concat([stats_2023_clean, stats_2022_clean], axis=0)
+# df_combined_2 = pd.concat([stats_2023_clean, stats_2022_clean], axis=0)
+# avg_br_m_2023 = df_combined_2[df_combined_2["Година"] == "2023"].общо_м.sum()
+# avg_tochki_m_2023 = sum(df_combined_2[df_combined_2["Година"] == "2023"].общо_м * df_combined_2[df_combined_2["Година"] == "2023"].ТОЧКИ)/avg_br_m_2023
+# avg_br_m_2022 = df_combined_2[df_combined_2["Година"] == "2022"].общо_м.sum()
+# avg_tochki_m_2022 = sum(df_combined_2[df_combined_2["Година"] == "2022"].общо_м * df_combined_2[df_combined_2["Година"] == "2022"].ТОЧКИ)/avg_br_m_2022
 
-plt.figure(figsize=(7,4), dpi=200)
-# df_combined_2[df_combined_2["Година"] == "2023"]
+# Layout
+selected_column = st.radio("Select a column to display:", ('общо_м', 'общо_ж', 'общо'))
+if selected_column == 'общо_м':
+    y_column = 'общо_м'
+elif selected_column == 'общо_ж':
+    y_column = 'общо_ж'
+else:
+    y_column = 'общо'
 
-df_combined_2['Bin'] = pd.cut(df_combined_2.ТОЧКИ, bins=20)
-sns.barplot(data=df_combined_2,
-                  x=df_combined_2["Bin"].astype(str),
-                  y="общо_м",
-                  hue="Година",
-                  estimator='sum',
-                  errorbar=None)
-sns.lineplot(data=df_combined_2,
-                   x=df_combined_2["Bin"].astype(str),
-                   y="общо_ж",
-                   hue="Година",
-                   linewidth=.5,
-                   estimator='sum',
-                   errorbar=None)
-plt.xticks(rotation=90, fontsize=6)
-plt.yticks(fontsize=6)
-plt.xlabel('Точки', fontsize=8)
-plt.ylabel('Ученици(м)', fontsize=8)
-plt.legend(fontsize=6)
 
-avg_br_m_2023 = df_combined_2[df_combined_2["Година"] == "2023"].общо_м.sum()
-avg_tochki_m_2023 = sum(df_combined_2[df_combined_2["Година"] == "2023"].общо_м * df_combined_2[df_combined_2["Година"] == "2023"].ТОЧКИ)/avg_br_m_2023
-avg_br_m_2022 = df_combined_2[df_combined_2["Година"] == "2022"].общо_м.sum()
-avg_tochki_m_2022 = sum(df_combined_2[df_combined_2["Година"] == "2022"].общо_м * df_combined_2[df_combined_2["Година"] == "2022"].ТОЧКИ)/avg_br_m_2022
+# Data Visualization
+fig = px.histogram(stats_2023_clean,
+                   x="Bin",
+                   y=y_column,
+                   color="Година",
+                   histfunc='sum',
+                   text_auto='.2s')
+fig.update_traces(textfont_size=12, textangle=0, textposition="outside", cliponaxis=False)
 
-plt.title(f"2023(м)      ученици: {avg_br_m_2023}     ср.успех: {avg_tochki_m_2023.round(2)}\n2022(м)      ученици: {avg_br_m_2022}     ср.успех: {avg_tochki_m_2022.round(2)}", fontsize=10)
-plt.show()
+df_grouped_2022 = stats_2022_clean.query("Година == '2022'").groupby("Bin", as_index=False)[y_column].sum()
+fig.add_trace(go.Scatter(x=df_grouped_2022["Bin"],
+                         y=df_grouped_2022[y_column],
+                         mode='lines',
+                         line=dict(width=1),
+                         name='2022'))
+
+fig.update_layout(
+    title='НВО Статистика на резултатите',
+    xaxis=dict(
+        title='Точки',
+        titlefont_size=14,
+        tickfont_size=12,
+        tickangle=-90),
+    yaxis=dict(
+        title='Ученици (бр)',
+        titlefont_size=14,
+        tickfont_size=12))
+
+
+st.plotly_chart(fig)
