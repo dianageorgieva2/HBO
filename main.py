@@ -99,5 +99,5 @@ fig.update_layout(
         titlefont_size=14,
         tickfont_size=12))
 
-
+st.plotly_chart(fig, use_container_width=True)
 st.plotly_chart(fig)
