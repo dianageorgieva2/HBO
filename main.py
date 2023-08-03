@@ -108,65 +108,66 @@ stats_2020_clean['Bin'] = stats_2020_clean['Bin'].apply(lambda x: f"{x.left:.1f}
 # avg_tochki_m_2022 = sum(df_combined_2[df_combined_2["Година"] == "2022"].общо_м * df_combined_2[df_combined_2["Година"] == "2022"].ТОЧКИ)/avg_br_m_2022
 
 # Layout
-selected_column = st.radio("Изберете опция:", ('Ученици(о)', 'Ученици(м)', 'Ученици(ж)'), horizontal=True)
-if selected_column == 'Общо(м)':
-    y_column = 'общо_м'
-elif selected_column == 'Общо(ж)':
-    y_column = 'общо_ж'
-else:
-    y_column = 'общо'
+with st.container():
+    selected_column = st.radio("Изберете опция:", ('Ученици(общо)', 'Ученици(мъже)', 'Ученици(жени)'), horizontal=True)
+    if selected_column == 'Ученици(мъже)':
+        y_column = 'общо_м'
+    elif selected_column == 'Ученици(жени)':
+        y_column = 'общо_ж'
+    else:
+        y_column = 'общо'
 
 
-# Data visualization
-fig = px.histogram(stats_2023_clean,
-                   x="Bin",
-                   y=y_column,
-                   color="Година",
-                   histfunc='sum',
-                   width=1000,
-                   text_auto='.2s')
-fig.update_traces(textfont_size=12, textangle=0, textposition="outside", cliponaxis=False)
+    # Data visualization
+    fig = px.histogram(stats_2023_clean,
+                       x="Bin",
+                       y=y_column,
+                       color="Година",
+                       histfunc='sum',
+                       width=1000,
+                       text_auto='.2s')
+    fig.update_traces(textfont_size=12, textangle=0, textposition="outside", cliponaxis=False)
 
-df_grouped_2022 = stats_2022_clean.query("Година == '2022'").groupby("Bin", as_index=False)[y_column].sum()
-fig.add_trace(go.Scatter(x=df_grouped_2022["Bin"],
-                         y=df_grouped_2022[y_column],
-                         mode='lines',
-                         line=dict(width=2),
-                         name='2022'))
-df_grouped_2021 = stats_2021_clean.query("Година == '2021'").groupby("Bin", as_index=False)[y_column].sum()
-fig.add_trace(go.Scatter(x=df_grouped_2022["Bin"],
-                         y=df_grouped_2021[y_column],
-                         mode='lines',
-                         line=dict(width=2),
-                         name='2021'))
-df_grouped_2020 = stats_2020_clean.query("Година == '2020'").groupby("Bin", as_index=False)[y_column].sum()
-fig.add_trace(go.Scatter(x=df_grouped_2022["Bin"],
-                         y=df_grouped_2020[y_column],
-                         mode='lines',
-                         line=dict(width=2),
-                         marker=dict(size=6),
-                         name='2020'))
+    df_grouped_2022 = stats_2022_clean.query("Година == '2022'").groupby("Bin", as_index=False)[y_column].sum()
+    fig.add_trace(go.Scatter(x=df_grouped_2022["Bin"],
+                             y=df_grouped_2022[y_column],
+                             mode='lines',
+                             line=dict(width=2),
+                             name='2022'))
+    df_grouped_2021 = stats_2021_clean.query("Година == '2021'").groupby("Bin", as_index=False)[y_column].sum()
+    fig.add_trace(go.Scatter(x=df_grouped_2022["Bin"],
+                             y=df_grouped_2021[y_column],
+                             mode='lines',
+                             line=dict(width=2),
+                             name='2021'))
+    df_grouped_2020 = stats_2020_clean.query("Година == '2020'").groupby("Bin", as_index=False)[y_column].sum()
+    fig.add_trace(go.Scatter(x=df_grouped_2022["Bin"],
+                             y=df_grouped_2020[y_column],
+                             mode='lines',
+                             line=dict(width=2),
+                             marker=dict(size=6),
+                             name='2020'))
 
-# fig = px.bar(stats_2023_clean, x="Bin", y=y_column, color="Година", barmode='group', text=y_column)
-# fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
-# df_grouped_2022 = stats_2022_clean.query("Година == '2022'").groupby("Bin", as_index=False)[y_column].sum()
-# fig.add_trace(go.Scatter(x=df_grouped_2022["Bin"], y=df_grouped_2022[y_column], mode='lines', line=dict(width=1), name='2022'))
-# df_grouped_2021 = stats_2021_clean.query("Година == '2021'").groupby("Bin", as_index=False)[y_column].sum()
-# fig.add_trace(go.Scatter(x=df_grouped_2022["Bin"], y=df_grouped_2021[y_column], mode='lines', line=dict(width=1), name='2021'))
-# df_grouped_2020 = stats_2020_clean.query("Година == '2020'").groupby("Bin", as_index=False)[y_column].sum()
-# fig.add_trace(go.Scatter(x=df_grouped_2022["Bin"], y=df_grouped_2020[y_column], mode='lines', line=dict(width=1), name='2020'))
+    # fig = px.bar(stats_2023_clean, x="Bin", y=y_column, color="Година", barmode='group', text=y_column)
+    # fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
+    # df_grouped_2022 = stats_2022_clean.query("Година == '2022'").groupby("Bin", as_index=False)[y_column].sum()
+    # fig.add_trace(go.Scatter(x=df_grouped_2022["Bin"], y=df_grouped_2022[y_column], mode='lines', line=dict(width=1), name='2022'))
+    # df_grouped_2021 = stats_2021_clean.query("Година == '2021'").groupby("Bin", as_index=False)[y_column].sum()
+    # fig.add_trace(go.Scatter(x=df_grouped_2022["Bin"], y=df_grouped_2021[y_column], mode='lines', line=dict(width=1), name='2021'))
+    # df_grouped_2020 = stats_2020_clean.query("Година == '2020'").groupby("Bin", as_index=False)[y_column].sum()
+    # fig.add_trace(go.Scatter(x=df_grouped_2022["Bin"], y=df_grouped_2020[y_column], mode='lines', line=dict(width=1), name='2020'))
 
 
-fig.update_layout(
-    title='НВО Статистика на успеваемостта',
-    xaxis=dict(
-        title='Точки',
-        titlefont_size=14,
-        tickfont_size=12,
-        tickangle=-90),
-    yaxis=dict(
-        title='Ученици (бр)',
-        titlefont_size=14,
-        tickfont_size=12))
-st.plotly_chart(fig, use_container_width=True)
+    fig.update_layout(
+        title='НВО Статистика на успеваемостта',
+        xaxis=dict(
+            title='Точки',
+            titlefont_size=14,
+            tickfont_size=12,
+            tickangle=-90),
+        yaxis=dict(
+            title='Ученици (бр)',
+            titlefont_size=14,
+            tickfont_size=12))
+    st.plotly_chart(fig, use_container_width=True)
 
