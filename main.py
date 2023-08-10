@@ -374,12 +374,12 @@ with c:
                                textposition="outside",
                                cliponaxis=False,
                                textfont=dict(size=12),
-                               hoverinfo='text',
-                               hovertext=klasirane_2023_1_clean['Училище'],
+                               hoverinfo='x',
                                orientation="h"))
     fig3.update_layout(
-        title='Класиране - детайли',
+        title='Класиране 2023 - детайли',
         height=20000,
+        hovermode='closest',
         xaxis=dict(
             title='Минимален бал',
             titlefont_size=14,
@@ -389,10 +389,6 @@ with c:
                    type='category',
                    tickmode='array',
                    ticktext=yticks_text,
-                   tickvals=klasirane_2023_combined['Код паралелка']),
-        hoverlabel=dict(
-            bgcolor="lightgray",
-            font=dict(size=12, color='black'),
-            align='left'))
+                   tickvals=klasirane_2023_combined['Код паралелка']))
 
     st.plotly_chart(fig3, use_container_width=True)
