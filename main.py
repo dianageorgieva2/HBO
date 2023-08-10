@@ -234,7 +234,7 @@ klasirane_2023_1 = pd.read_csv('klasirane/2023/min_maх_paralelki_1.etap_2023 (3
 klasirane_2023_2 = pd.read_csv('klasirane/2023/min_max_2_etap_2023 (1).csv')
 klasirane_2023_3 = pd.read_csv('klasirane/2023/min_max_po_paralelki_3_etap_2023 (1).csv')
 klasirane_2023_4 = pd.read_csv('klasirane/2023/min_max_po_par_4_etap_2023 (1).csv')
-
+kodove_2023 = pd.read_csv('klasirane/2023/Za_saita_s_kodove_baloobrazuvane_2023-12.csv')
 
 # Data Cleaning
 klasirane_2023_1_clean = klasirane_2023_1.rename(columns={
@@ -322,6 +322,24 @@ klasirane_2023_4_clean["Година"] = "2023"
 klasirane_2023_4_clean = klasirane_2023_4_clean.sort_values(by='Мин_бал_о', ascending=False)
 klasirane_2023_4_clean.reset_index(drop=True, inplace=True)
 
+# For future functionalities ready to use cleaning model of the codes
+# kodove_2023_cleaan = kodove_2023.rename(columns={
+#                            "Unnamed: 1": "РАЙОН",
+#                            "Unnamed: 2": "Училище",
+#                            "Unnamed: 3": "Код паралелка",
+#                            "Unnamed: 4": "Паралелка",
+#                            "Unnamed: 5": "Вид на паралелката",
+#                            "Unnamed: 6": "Балообразуване",
+#                            "Unnamed: 7": "Форма на обучение",
+#                            "Unnamed: 8": "Брой паралелки",
+#                            "Unnamed: 9": "Общо основание",
+#                            "Unnamed: 10": "Мъже",
+#                            "Unnamed: 11": "Жени"})
+# kodove_2023_cleaan = kodove_2023_cleaan.drop(['СПИСЪК НА ПАРАЛЕЛКИТЕ С ДЪРЖАВЕН ПЛАН-ПРИЕМ В VIII КЛАС ЗА УЧЕБНАТА 2023/2024 ГОДИНА В ОБЛАСТ СОФИЯ-ГРАД \nс кодове и балообразуване'], axis=1)
+# kodove_2023_cleaan = kodove_2023_cleaan[kodove_2023_cleaan["Код паралелка"].notna()]
+# kodove_2023_cleaan = kodove_2023_cleaan.drop([1], axis=0)
+# kodove_2023_cleaan["Година"] = "2023"
+# kodove_2023_cleaan.reset_index(drop=True, inplace=True)
 
 klasirane_2023_combined = pd.concat([klasirane_2023_1_clean, klasirane_2023_2_clean, klasirane_2023_3_clean, klasirane_2023_4_clean], axis=0)
 klasirane_2023_combined.reset_index(drop=True, inplace=True)
@@ -329,8 +347,7 @@ klasirane_2023_combined.sort_values(by='Класиране', ascending=False)
 
 code_to_uchilishte_map = dict(klasirane_2023_combined[['Код паралелка', 'Училище']].drop_duplicates().values)
 code_to_paral_map = dict(zip(klasirane_2023_combined['Код паралелка'], klasirane_2023_combined['Паралелка']))
-yticks_text = [f"{code} - {code_to_paral_map[code]}" for code in klasirane_2023_combined['Код паралелка'].unique()]
-hover_text = [f"{code_to_uchilishte_map[code]}" for code in klasirane_2023_combined['Код паралелка'].unique()]
+yticks_text = [f"{code} - {code_to_paral_map[code]}<br>({code_to_uchilishte_map[code]})" for code in klasirane_2023_combined['Код паралелка'].unique()]
 
 # Create fig3
 with c:
@@ -356,14 +373,13 @@ with c:
                                text=df_к[x_column],
                                textposition="outside",
                                cliponaxis=False,
-                               textfont=dict(size=14),
+                               textfont=dict(size=12),
                                hoverinfo='text',
-                               hovertext=hover_text,
+                               hovertext=klasirane_2023_1_clean['Училище'],
                                orientation="h"))
-
     fig3.update_layout(
         title='Класиране - детайли',
-        height=15000,
+        height=20000,
         xaxis=dict(
             title='Минимален бал',
             titlefont_size=14,
@@ -375,8 +391,8 @@ with c:
                    ticktext=yticks_text,
                    tickvals=klasirane_2023_combined['Код паралелка']),
         hoverlabel=dict(
-            bgcolor="pink",
-            font_size=14,
+            bgcolor="lightgray",
+            font=dict(size=12, color='black'),
             align='left'))
 
     st.plotly_chart(fig3, use_container_width=True)
