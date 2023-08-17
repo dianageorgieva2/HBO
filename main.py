@@ -107,7 +107,7 @@ st.title("HBO DASHBOARD")
 col1, col2 = st.columns(2, gap='medium')
 
 with col2:
-    selected_column = st.radio("Изберете опция:", ('Ученици(общо)', 'Ученици(мъже)', 'Ученици(жени)'), key="col1_radio", horizontal=True)
+    selected_column = st.radio("Избери опция:", ('Ученици(общо)', 'Ученици(мъже)', 'Ученици(жени)'), key="col1_radio", horizontal=True)
     if selected_column == 'Ученици(мъже)':
         y_column = 'общо_м'
     elif selected_column == 'Ученици(жени)':
@@ -154,7 +154,7 @@ with col2:
             title='Ученици (бр)',
             titlefont_size=14,
             tickfont_size=12))
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
 with col1:
 
@@ -169,7 +169,7 @@ with col1:
     df_statistika_combined["tochki_avg_o"] = (df_statistika_combined.tochki_sum_o / df_statistika_combined.общо).round(2)
     df_statistika_combined.reset_index(inplace=True)
 
-    selected_option = st.radio("Изберете опция:", ('Ученици(общо)', 'Ученици(мъже)', 'Ученици(жени)'), key="col2_radio", horizontal=True)
+    selected_option = st.radio("Избери опция:", ('Ученици(общо)', 'Ученици(мъже)', 'Ученици(жени)'), key="col2_radio", horizontal=True)
     if selected_option == 'Ученици(мъже)':
         y_column = 'общо_м'
         avg_tochki = "tochki_avg_m"
@@ -212,16 +212,16 @@ with col1:
             tickmode='array',
             tickvals=df_statistika_combined.Година,
             ticktext=df_statistika_combined.Година.astype(str)),
-        yaxis=dict(tickfont_size=12,),
+        yaxis=dict(showticklabels=False),
         yaxis2=dict(
-            tickfont_size=12,
+            showticklabels=False,
             anchor='free',
             overlaying='y',
             side='right',
             position=1,
             range=(df_statistika_combined[avg_tochki].min() - 10, df_statistika_combined[avg_tochki].max() + 10)))
 
-    st.plotly_chart(fig2, use_container_width=True)
+    st.plotly_chart(fig2, use_container_width=True, config={'displayModeBar': False})
 
 #----------KLASIRANE----------
 #layout
@@ -230,6 +230,7 @@ c = st.container()
 # Data import
 mesta_2023_3 = pd.read_csv('klasirane/2023/svobodni_mesta_za_3_etap_2023-3 (1).csv')
 mesta_2023_4 = pd.read_csv('klasirane/2023/svobodni_mesta_za_4_etap_2023.csv')
+mesta_2023_5 = pd.read_csv('klasirane/2023/svobodni_mesta_za_5_etap_2023-1.csv')
 klasirane_2023_1 = pd.read_csv('klasirane/2023/min_maх_paralelki_1.etap_2023 (3).csv')
 klasirane_2023_2 = pd.read_csv('klasirane/2023/min_max_2_etap_2023 (1).csv')
 klasirane_2023_3 = pd.read_csv('klasirane/2023/min_max_po_paralelki_3_etap_2023 (1).csv')
@@ -341,9 +342,91 @@ klasirane_2023_4_clean.reset_index(drop=True, inplace=True)
 # kodove_2023_cleaan["Година"] = "2023"
 # kodove_2023_cleaan.reset_index(drop=True, inplace=True)
 
-klasirane_2023_combined = pd.concat([klasirane_2023_1_clean, klasirane_2023_2_clean, klasirane_2023_3_clean, klasirane_2023_4_clean], axis=0)
+# Svobodni mesta data clean up
+mesta_2023_3_clean = mesta_2023_3.drop(['СВОБОДНИ МЕСТА ЗА ТРЕТИ ЕТАП НА КЛАСИРАНЕ ПО ПАРАЛЕЛКИ С КОДОВЕ ПО УЧИЛИЩА, \nПРИЕМ В VIII КЛАС ЗА УЧЕБНАТА 2023/ 2024 ГОДИНА ', 'Unnamed: 5'], axis=1)
+mesta_2023_3_clean = mesta_2023_3_clean.rename(columns={
+                           "Unnamed: 1": "Код училище",
+                           "Unnamed: 2": "Училище",
+                           "Unnamed: 3": "Код паралелка",
+                           "Unnamed: 4": "Паралелка",
+                           "Unnamed: 6": "Места_о",
+                           "Unnamed: 7": "Места_м",
+                           "Unnamed: 8": "Места_ж",})
+mesta_2023_3_clean = mesta_2023_3_clean[mesta_2023_3_clean["Код паралелка"].notna()]
+mesta_2023_3_clean = mesta_2023_3_clean.drop([2, 3], axis=0)
+mesta_2023_3_clean = mesta_2023_3_clean.fillna(0)
+mesta_2023_3_clean[["Места_о", "Места_м", "Места_ж"]] = mesta_2023_3_clean[["Места_о", "Места_м", "Места_ж"]].replace('-', 0)
+mesta_2023_3_clean[["Места_о", "Места_м", "Места_ж"]] = mesta_2023_3_clean[["Места_о", "Места_м", "Места_ж"]].astype(int)
+mesta_2023_3_clean['Места_общ_брой'] = mesta_2023_3_clean[["Места_о", "Места_м", "Места_ж"]].sum(axis=1)
+mesta_2023_3_clean["Класиране"] = 3
+mesta_2023_3_clean["Година"] = "2023"
+mesta_2023_3_clean = mesta_2023_3_clean.sort_values(by='Код паралелка')
+mesta_2023_3_clean.reset_index(drop=True, inplace=True)
+klasirane_2023_3_clean = klasirane_2023_3_clean.sort_values(by='Код паралелка')
+klasirane_2023_3_clean.reset_index(drop=True, inplace=True)
+klasirane_2023_3_clean_plus = pd.concat([klasirane_2023_3_clean, mesta_2023_3_clean], axis=1, copy=False, ignore_index=False)
+klasirane_2023_3_clean_plus = klasirane_2023_3_clean_plus.sort_values(by='Мин_бал_о', ascending=False)
+klasirane_2023_3_clean_plus = klasirane_2023_3_clean_plus.loc[:, ~klasirane_2023_3_clean_plus.columns.duplicated()].copy()
+
+mesta_2023_4_clean = mesta_2023_4.drop(['СВОБОДНИ МЕСТА ЗА ЧЕТВЪРТИ ЕТАП НА КЛАСИРАНЕ ПО ПАРАЛЕЛКИ С КОДОВЕ ПО УЧИЛИЩА, \nПРИЕМ В VIII КЛАС ЗА УЧЕБНАТА 2023/ 2024 ГОДИНА ', 'Unnamed: 5'], axis=1)
+mesta_2023_4_clean = mesta_2023_4_clean.rename(columns={
+                           "Unnamed: 1": "Код училище",
+                           "Unnamed: 2": "Училище",
+                           "Unnamed: 3": "Код паралелка",
+                           "Unnamed: 4": "Паралелка",
+                           "Unnamed: 6": "Места_о",
+                           "Unnamed: 7": "Места_м",
+                           "Unnamed: 8": "Места_ж",})
+mesta_2023_4_clean = mesta_2023_4_clean[mesta_2023_4_clean["Код паралелка"].notna()]
+mesta_2023_4_clean = mesta_2023_4_clean.drop([2, 3], axis=0)
+mesta_2023_4_clean = mesta_2023_4_clean.fillna(0)
+mesta_2023_4_clean[["Места_о", "Места_м", "Места_ж"]] = mesta_2023_4_clean[["Места_о", "Места_м", "Места_ж"]].replace('-', 0)
+mesta_2023_4_clean[["Места_о", "Места_м", "Места_ж"]] = mesta_2023_4_clean[["Места_о", "Места_м", "Места_ж"]].astype(int)
+mesta_2023_4_clean['Места_общ_брой'] = mesta_2023_4_clean[["Места_о", "Места_м", "Места_ж"]].sum(axis=1)
+mesta_2023_4_clean["Класиране"] = 4
+mesta_2023_4_clean["Година"] = "2023"
+mesta_2023_4_clean = mesta_2023_4_clean.sort_values(by='Код паралелка')
+mesta_2023_4_clean.reset_index(drop=True, inplace=True)
+klasirane_2023_4_clean = klasirane_2023_4_clean.sort_values(by='Код паралелка')
+klasirane_2023_4_clean.reset_index(drop=True, inplace=True)
+klasirane_2023_4_clean_plus = pd.concat([klasirane_2023_4_clean, mesta_2023_4_clean], axis=1, copy=False, ignore_index=False)
+klasirane_2023_4_clean_plus = klasirane_2023_4_clean_plus.sort_values(by='Мин_бал_о', ascending=False)
+klasirane_2023_4_clean_plus = klasirane_2023_4_clean_plus.loc[:, ~klasirane_2023_4_clean_plus.columns.duplicated()].copy()
+
+mesta_2023_5_clean = mesta_2023_5.drop(['СВОБОДНИ МЕСТА СЛЕД ЧЕТВЪРТИ ЕТАП НА КЛАСИРАНЕ ПО ПАРАЛЕЛКИ С КОДОВЕ ПО УЧИЛИЩА, \nПРИЕМ В VIII КЛАС ЗА УЧЕБНАТА 2023/ 2024 ГОДИНА ', 'Unnamed: 5', 'Unnamed: 9'], axis=1)
+mesta_2023_5_clean = mesta_2023_5_clean.rename(columns={
+                           "Unnamed: 1": "Код училище",
+                           "Unnamed: 2": "Училище",
+                           "Unnamed: 3": "Код паралелка",
+                           "Unnamed: 4": "Паралелка",
+                           "Unnamed: 6": "Места_о",
+                           "Unnamed: 7": "Места_м",
+                           "Unnamed: 8": "Места_ж",})
+mesta_2023_5_clean = mesta_2023_5_clean[mesta_2023_5_clean["Код паралелка"].notna()]
+mesta_2023_5_clean = mesta_2023_5_clean.drop([2, 3], axis=0)
+# df = mesta_2023_5_clean[mesta_2023_5_clean['Код паралелка'].isin(klasirane_2023_1_clean['Код паралелка']) == False]
+# print(df) #Paraalaka kod 0374 and 3191 are only in the last file and will be removed for the moment.
+mesta_2023_5_clean = mesta_2023_5_clean[mesta_2023_5_clean['Код паралелка'].isin(klasirane_2023_1_clean['Код паралелка'])]
+mesta_2023_5_clean = mesta_2023_5_clean.fillna(0)
+mesta_2023_5_clean[["Места_о", "Места_м", "Места_ж"]] = mesta_2023_5_clean[["Места_о", "Места_м", "Места_ж"]].replace('-', 0)
+mesta_2023_5_clean[["Места_о", "Места_м", "Места_ж"]] = mesta_2023_5_clean[["Места_о", "Места_м", "Места_ж"]].astype(int)
+mesta_2023_5_clean['Места_общ_брой'] = mesta_2023_5_clean[["Места_о", "Места_м", "Места_ж"]].sum(axis=1)
+mesta_2023_5_clean["Класиране"] = 5
+mesta_2023_5_clean["Година"] = "2023"
+mesta_2023_5_clean = mesta_2023_5_clean.sort_values(by='Код паралелка')
+mesta_2023_5_clean.reset_index(drop=True, inplace=True)
+klasirane_2023_1_clean = klasirane_2023_1_clean.sort_values(by='Код паралелка')
+klasirane_2023_1_clean.reset_index(drop=True, inplace=True)
+mesta_2023_5_clean_ordered = pd.concat([klasirane_2023_1_clean, mesta_2023_5_clean], axis=1, copy=False, ignore_index=False)
+mesta_2023_5_clean_ordered = mesta_2023_5_clean_ordered.sort_values(by='Мин_бал_о', ascending=False)
+mesta_2023_5_clean_ordered = mesta_2023_5_clean_ordered.loc[:, ~mesta_2023_5_clean_ordered.columns.duplicated()].copy()
+mesta_2023_5_clean_ordered = mesta_2023_5_clean_ordered.drop(['Мин_бал_о', 'Мин_бал_м', 'Мин_бал_ж', 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж'], axis=1)
+klasirane_2023_1_clean = klasirane_2023_1_clean.sort_values(by='Мин_бал_о', ascending=False)
+mesta_2023_5_clean_ordered['Класиране'] = 5
+
+klasirane_2023_combined = pd.concat([klasirane_2023_1_clean, klasirane_2023_2_clean, klasirane_2023_3_clean_plus, klasirane_2023_4_clean_plus, mesta_2023_5_clean_ordered], axis=0)
 klasirane_2023_combined.reset_index(drop=True, inplace=True)
-klasirane_2023_combined.sort_values(by='Класиране', ascending=False)
+# klasirane_2023_combined.sort_values(by='Класиране', ascending=False)
 
 code_to_uchilishte_map = dict(klasirane_2023_combined[['Код паралелка', 'Училище']].drop_duplicates().values)
 code_to_paral_map = dict(zip(klasirane_2023_combined['Код паралелка'], klasirane_2023_combined['Паралелка']))
@@ -351,44 +434,78 @@ yticks_text = [f"{code} - {code_to_paral_map[code]}<br>({code_to_uchilishte_map[
 
 # Create fig3
 with c:
-    selected_option = st.radio("Изберете опция:", ('Ученици(общо)', 'Ученици(мъже)', 'Ученици(жени)'), key="fig3_radio",
+    div_style = "overflow-y: scroll; max-height: 1000px;"
+    st.write(f'<div style="{div_style}">', unsafe_allow_html=True)
+
+    selected_option = st.radio("Избери опция:", ('Ученици(общо)', 'Ученици(мъже)', 'Ученици(жени)'), key="fig3_radio",
                                horizontal=True)
     if selected_option == 'Ученици(мъже)':
         x_column = 'Мин_бал_м'
-        max_bal = "Макс_бал_м"
+        x2_column = "Места_м"
     elif selected_option == 'Ученици(жени)':
         x_column = 'Мин_бал_ж'
-        max_bal = "Макс_бал_ж"
+        x2_column = "Места_ж"
     else:
         x_column = 'Мин_бал_о'
-        max_bal = "Макс_бал_о"
+        x2_column = "Места_общ_брой"
 
     fig3 = go.Figure()
-    for k in klasirane_2023_combined['Класиране'].unique():
-        df_к = klasirane_2023_combined[klasirane_2023_combined['Класиране'] == k]
-        # noinspection PyTypeChecker
-        fig3.add_traces(go.Bar(x=df_к[x_column],
-                               y=df_к['Код паралелка'],
+    for k in klasirane_2023_combined[klasirane_2023_combined['Класиране'] != 5]['Класиране'].unique():
+        df_k = klasirane_2023_combined[klasirane_2023_combined['Класиране'] == k]
+        fig3.add_traces(go.Bar(x=df_k[x_column],
+                               y=df_k['Код паралелка'],
                                name=f'{k} класиране',
-                               text=df_к[x_column],
+                               text=df_k[x_column],
                                textposition="outside",
                                cliponaxis=False,
                                textfont=dict(size=12),
                                hoverinfo='x',
                                orientation="h"))
+    placeholder = 550
+    for k in klasirane_2023_combined['Класиране'].unique():
+        df_k = klasirane_2023_combined[klasirane_2023_combined['Класиране'] == k]
+        fig3.add_traces(go.Scatter(x=np.full(df_k.shape[0], placeholder),
+                                   y=df_k['Код паралелка'],
+                                   text=df_k[x2_column],
+                                   mode='text',
+                                   textfont_color='darkblue',
+                                   showlegend=False))
+        placeholder += 50
+
     fig3.update_layout(
         title='Класиране 2023 - детайли',
         height=20000,
         hovermode='closest',
-        xaxis=dict(
-            title='Минимален бал',
-            titlefont_size=14,
-            tickfont_size=12),
+        legend=dict(orientation="h",
+                    yanchor="auto",
+                    y=1,
+                    xanchor="auto"),
+        xaxis=dict(title='Минимален бал',
+                   titlefont_size=14,
+                   side="bottom",
+                   showticklabels=False),
         yaxis=dict(tickfont_size=12,
                    autorange="reversed",
                    type='category',
                    tickmode='array',
                    ticktext=yticks_text,
                    tickvals=klasirane_2023_combined['Код паралелка']))
+    config = {
+        'scrollZoom': False,
+        'scrollBar': {'enabled': True},
+        'displayModeBar': False
+    }
 
-    st.plotly_chart(fig3, use_container_width=True)
+    fig3.add_annotation(dict(font=dict(color='yellow', size=15),
+                             x=1,
+                             y=1,
+                             showarrow=False,
+                             text="Свободни места за 3кл",
+                             textangle=0,
+                             xanchor='left',
+                             xref="paper",
+                             yref="paper"))
+
+    st.plotly_chart(fig3, use_container_width=True, config=config)
+    st.write('</div>', unsafe_allow_html=True)
+
