@@ -1,15 +1,18 @@
 import pandas as pd
 import numpy as np
-
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
+import io
+import streamlit.components.v1 as components
+import plotly.io as pio
+import textwrap
 
+pio.templates.default = "plotly"
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 pd.set_option('display.width', 1000)
 pd.options.display.float_format = '{:,.2f}'.format
-
 
 #----------STATISTIKA----------
 # Stats data load
@@ -103,10 +106,13 @@ stats_2020_clean['Bin'] = stats_2020_clean['Bin'].apply(lambda x: f"{x.left:.1f}
 
 # Layout
 st.set_page_config(layout="wide")
-st.title("HBO DASHBOARD")
+st.markdown("<h1 style='text-align: center;'>Национално Външно Оценяване (НВО)</h1>", unsafe_allow_html=True)
 col1, col2 = st.columns(2, gap='medium')
 
+# Data visualization fig1
 with col2:
+    st.markdown("<h3 style='text-align: center;'>НВО Успеваемост</h3>", unsafe_allow_html=True)
+
     selected_column = st.radio("Избери опция:", ('Ученици(общо)', 'Ученици(мъже)', 'Ученици(жени)'), key="col1_radio", horizontal=True)
     if selected_column == 'Ученици(мъже)':
         y_column = 'общо_м'
@@ -115,7 +121,6 @@ with col2:
     else:
         y_column = 'общо'
 
-    # Data visualization fig1
     fig = px.histogram(stats_2023_clean,
                        x="Bin",
                        y=y_column,
@@ -144,7 +149,6 @@ with col2:
                              name='2020'))
 
     fig.update_layout(
-        title='НВО Успеваемост',
         xaxis=dict(
             title='Точки',
             titlefont_size=14,
@@ -153,7 +157,13 @@ with col2:
         yaxis=dict(
             title='Ученици (бр)',
             titlefont_size=14,
-            tickfont_size=12))
+            tickfont_size=12),
+        legend=dict(orientation="h",
+                    yanchor="auto",
+                    y=1.2,
+                    x=1,
+                    xanchor="auto",
+                    title=None))
     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
 with col1:
@@ -169,6 +179,9 @@ with col1:
     df_statistika_combined["tochki_avg_o"] = (df_statistika_combined.tochki_sum_o / df_statistika_combined.общо).round(2)
     df_statistika_combined.reset_index(inplace=True)
 
+    # Data visualization fig2
+    st.markdown("<h3 style='text-align: center;'>НВО статистика</h3>", unsafe_allow_html=True)
+
     selected_option = st.radio("Избери опция:", ('Ученици(общо)', 'Ученици(мъже)', 'Ученици(жени)'), key="col2_radio", horizontal=True)
     if selected_option == 'Ученици(мъже)':
         y_column = 'общо_м'
@@ -180,7 +193,6 @@ with col1:
         y_column = 'общо'
         avg_tochki = "tochki_avg_o"
 
-    # Data visualization fig2
     fig2 = go.Figure()
     bar_trace = go.Bar(x=df_statistika_combined["Година"],
                        y=df_statistika_combined[y_column],
@@ -188,7 +200,8 @@ with col1:
                        name="Ученици(брой)",
                        textposition="outside",
                        cliponaxis=False,
-                       textfont=dict(size=12))
+                       textfont=dict(size=12),
+                       hoverinfo=None)
     scatter_trace = go.Scatter(x=df_statistika_combined["Година"],
                                y=df_statistika_combined[avg_tochki],
                                name="Среден успех(точки)",
@@ -199,12 +212,12 @@ with col1:
                                cliponaxis=False,
                                textfont=dict(
                                    size=12,
-                                   color="rgb(131, 201, 255)"))
+                                   color="rgb(131, 201, 255)"),
+                               hoverinfo=None)
     fig2.add_trace(bar_trace)
     fig2.add_trace(scatter_trace)
 
     fig2.update_layout(
-        title='НВО Статистика',
         xaxis=dict(
             title='Година',
             titlefont_size=14,
@@ -219,7 +232,13 @@ with col1:
             overlaying='y',
             side='right',
             position=1,
-            range=(df_statistika_combined[avg_tochki].min() - 10, df_statistika_combined[avg_tochki].max() + 10)))
+            range=(df_statistika_combined[avg_tochki].min() - 10, df_statistika_combined[avg_tochki].max() + 10)),
+        legend=dict(orientation="h",
+                      yanchor="auto",
+                      y=1.2,
+                      x=1,
+                      xanchor="auto",
+                      title=None))
 
     st.plotly_chart(fig2, use_container_width=True, config={'displayModeBar': False})
 
@@ -256,6 +275,7 @@ klasirane_2023_1_clean = klasirane_2023_1_clean.fillna(0)
 klasirane_2023_1_clean = klasirane_2023_1_clean.drop(klasirane_2023_1_clean[klasirane_2023_1_clean["Код паралелка"] == 0].index, axis=0)
 klasirane_2023_1_clean[["Мин_бал_о", "Мин_бал_м", "Мин_бал_ж", 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']] = klasirane_2023_1_clean[["Мин_бал_о", "Мин_бал_м", "Мин_бал_ж", 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']].astype(float)
 klasirane_2023_1_clean["Класиране"] = '1'
+klasirane_2023_1_clean["Класиране"] = klasirane_2023_1_clean["Класиране"].astype(int)
 klasirane_2023_1_clean["Година"] = "2023"
 klasirane_2023_1_clean = klasirane_2023_1_clean.sort_values(by='Мин_бал_о', ascending=False)
 klasirane_2023_1_clean.reset_index(drop=True, inplace=True)
@@ -277,6 +297,7 @@ klasirane_2023_2_clean = klasirane_2023_2_clean[klasirane_2023_2_clean["Код �
 klasirane_2023_2_clean = klasirane_2023_2_clean.fillna(0)
 klasirane_2023_2_clean[["Мин_бал_о", "Мин_бал_м", "Мин_бал_ж", 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']] = klasirane_2023_2_clean[["Мин_бал_о", "Мин_бал_м", "Мин_бал_ж", 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']].astype(float)
 klasirane_2023_2_clean["Класиране"] = '2'
+klasirane_2023_2_clean["Класиране"] = klasirane_2023_2_clean["Класиране"].astype(int)
 klasirane_2023_2_clean["Година"] = "2023"
 klasirane_2023_2_clean = klasirane_2023_2_clean.sort_values(by='Мин_бал_о', ascending=False)
 klasirane_2023_2_clean.reset_index(drop=True, inplace=True)
@@ -298,6 +319,7 @@ klasirane_2023_3_clean = klasirane_2023_3_clean[klasirane_2023_3_clean["Код �
 klasirane_2023_3_clean = klasirane_2023_3_clean.fillna(0)
 klasirane_2023_3_clean[["Мин_бал_о", "Мин_бал_м", "Мин_бал_ж", 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']] = klasirane_2023_3_clean[["Мин_бал_о", "Мин_бал_м", "Мин_бал_ж", 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']].astype(float)
 klasirane_2023_3_clean["Класиране"] = '3'
+klasirane_2023_3_clean["Класиране"] = klasirane_2023_3_clean["Класиране"].astype(int)
 klasirane_2023_3_clean["Година"] = "2023"
 klasirane_2023_3_clean = klasirane_2023_3_clean.sort_values(by='Мин_бал_о', ascending=False)
 klasirane_2023_3_clean.reset_index(drop=True, inplace=True)
@@ -319,6 +341,7 @@ klasirane_2023_4_clean = klasirane_2023_4_clean[klasirane_2023_4_clean["Код �
 klasirane_2023_4_clean = klasirane_2023_4_clean.fillna(0)
 klasirane_2023_4_clean[["Мин_бал_о", "Мин_бал_м", "Мин_бал_ж", 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']] = klasirane_2023_4_clean[["Мин_бал_о", "Мин_бал_м", "Мин_бал_ж", 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']].astype(float)
 klasirane_2023_4_clean["Класиране"] = '4'
+klasirane_2023_4_clean["Класиране"] = klasirane_2023_4_clean["Класиране"].astype(int)
 klasirane_2023_4_clean["Година"] = "2023"
 klasirane_2023_4_clean = klasirane_2023_4_clean.sort_values(by='Мин_бал_о', ascending=False)
 klasirane_2023_4_clean.reset_index(drop=True, inplace=True)
@@ -356,14 +379,15 @@ mesta_2023_3_clean = mesta_2023_3_clean[mesta_2023_3_clean["Код парале�
 mesta_2023_3_clean = mesta_2023_3_clean.drop([2, 3], axis=0)
 mesta_2023_3_clean = mesta_2023_3_clean.fillna(0)
 mesta_2023_3_clean[["Места_о", "Места_м", "Места_ж"]] = mesta_2023_3_clean[["Места_о", "Места_м", "Места_ж"]].replace('-', 0)
-mesta_2023_3_clean[["Места_о", "Места_м", "Места_ж"]] = mesta_2023_3_clean[["Места_о", "Места_м", "Места_ж"]].astype(int)
-mesta_2023_3_clean['Места_общ_брой'] = mesta_2023_3_clean[["Места_о", "Места_м", "Места_ж"]].sum(axis=1)
 mesta_2023_3_clean["Класиране"] = 3
+mesta_2023_3_clean[["Места_о", "Места_м", "Места_ж", "Класиране"]] = mesta_2023_3_clean[["Места_о", "Места_м", "Места_ж", "Класиране"]].astype(int)
+mesta_2023_3_clean['Места_общ_брой'] = mesta_2023_3_clean[["Места_о", "Места_м", "Места_ж"]].sum(axis=1)
 mesta_2023_3_clean["Година"] = "2023"
 mesta_2023_3_clean = mesta_2023_3_clean.sort_values(by='Код паралелка')
 mesta_2023_3_clean.reset_index(drop=True, inplace=True)
 klasirane_2023_3_clean = klasirane_2023_3_clean.sort_values(by='Код паралелка')
 klasirane_2023_3_clean.reset_index(drop=True, inplace=True)
+
 klasirane_2023_3_clean_plus = pd.concat([klasirane_2023_3_clean, mesta_2023_3_clean], axis=1, copy=False, ignore_index=False)
 klasirane_2023_3_clean_plus = klasirane_2023_3_clean_plus.sort_values(by='Мин_бал_о', ascending=False)
 klasirane_2023_3_clean_plus = klasirane_2023_3_clean_plus.loc[:, ~klasirane_2023_3_clean_plus.columns.duplicated()].copy()
@@ -381,9 +405,9 @@ mesta_2023_4_clean = mesta_2023_4_clean[mesta_2023_4_clean["Код парале�
 mesta_2023_4_clean = mesta_2023_4_clean.drop([2, 3], axis=0)
 mesta_2023_4_clean = mesta_2023_4_clean.fillna(0)
 mesta_2023_4_clean[["Места_о", "Места_м", "Места_ж"]] = mesta_2023_4_clean[["Места_о", "Места_м", "Места_ж"]].replace('-', 0)
-mesta_2023_4_clean[["Места_о", "Места_м", "Места_ж"]] = mesta_2023_4_clean[["Места_о", "Места_м", "Места_ж"]].astype(int)
-mesta_2023_4_clean['Места_общ_брой'] = mesta_2023_4_clean[["Места_о", "Места_м", "Места_ж"]].sum(axis=1)
 mesta_2023_4_clean["Класиране"] = 4
+mesta_2023_4_clean[["Места_о", "Места_м", "Места_ж", "Класиране"]] = mesta_2023_4_clean[["Места_о", "Места_м", "Места_ж", "Класиране"]].astype(int)
+mesta_2023_4_clean['Места_общ_брой'] = mesta_2023_4_clean[["Места_о", "Места_м", "Места_ж"]].sum(axis=1)
 mesta_2023_4_clean["Година"] = "2023"
 mesta_2023_4_clean = mesta_2023_4_clean.sort_values(by='Код паралелка')
 mesta_2023_4_clean.reset_index(drop=True, inplace=True)
@@ -409,9 +433,9 @@ mesta_2023_5_clean = mesta_2023_5_clean.drop([2, 3], axis=0)
 mesta_2023_5_clean = mesta_2023_5_clean[mesta_2023_5_clean['Код паралелка'].isin(klasirane_2023_1_clean['Код паралелка'])]
 mesta_2023_5_clean = mesta_2023_5_clean.fillna(0)
 mesta_2023_5_clean[["Места_о", "Места_м", "Места_ж"]] = mesta_2023_5_clean[["Места_о", "Места_м", "Места_ж"]].replace('-', 0)
-mesta_2023_5_clean[["Места_о", "Места_м", "Места_ж"]] = mesta_2023_5_clean[["Места_о", "Места_м", "Места_ж"]].astype(int)
-mesta_2023_5_clean['Места_общ_брой'] = mesta_2023_5_clean[["Места_о", "Места_м", "Места_ж"]].sum(axis=1)
 mesta_2023_5_clean["Класиране"] = 5
+mesta_2023_5_clean[["Места_о", "Места_м", "Места_ж", "Класиране"]] = mesta_2023_5_clean[["Места_о", "Места_м", "Места_ж", "Класиране"]].astype(int)
+mesta_2023_5_clean['Места_общ_брой'] = mesta_2023_5_clean[["Места_о", "Места_м", "Места_ж"]].sum(axis=1)
 mesta_2023_5_clean["Година"] = "2023"
 mesta_2023_5_clean = mesta_2023_5_clean.sort_values(by='Код паралелка')
 mesta_2023_5_clean.reset_index(drop=True, inplace=True)
@@ -426,16 +450,20 @@ mesta_2023_5_clean_ordered['Класиране'] = 5
 
 klasirane_2023_combined = pd.concat([klasirane_2023_1_clean, klasirane_2023_2_clean, klasirane_2023_3_clean_plus, klasirane_2023_4_clean_plus, mesta_2023_5_clean_ordered], axis=0)
 klasirane_2023_combined.reset_index(drop=True, inplace=True)
-# klasirane_2023_combined.sort_values(by='Класиране', ascending=False)
 
 code_to_uchilishte_map = dict(klasirane_2023_combined[['Код паралелка', 'Училище']].drop_duplicates().values)
 code_to_paral_map = dict(zip(klasirane_2023_combined['Код паралелка'], klasirane_2023_combined['Паралелка']))
-yticks_text = [f"{code} - {code_to_paral_map[code]}<br>({code_to_uchilishte_map[code]})" for code in klasirane_2023_combined['Код паралелка'].unique()]
+yticks_text = [
+    f"{code}<br>{'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=40))}"
+    for code in klasirane_2023_combined['Код паралелка'].unique()
+]
+hover_text = [f"({code_to_uchilishte_map[code]})" for code in klasirane_2023_combined['Код паралелка'].unique()]
+
 
 # Create fig3
 with c:
-    div_style = "overflow-y: scroll; max-height: 1000px;"
-    st.write(f'<div style="{div_style}">', unsafe_allow_html=True)
+    # st.subheader("Класиране 2023 - детайли")
+    st.markdown("<h3 style='text-align: center;'>Класиране 2023 - детайли</h3>", unsafe_allow_html=True)
 
     selected_option = st.radio("Избери опция:", ('Ученици(общо)', 'Ученици(мъже)', 'Ученици(жени)'), key="fig3_radio",
                                horizontal=True)
@@ -449,10 +477,11 @@ with c:
         x_column = 'Мин_бал_о'
         x2_column = "Места_общ_брой"
 
+
     fig3 = go.Figure()
     for k in klasirane_2023_combined[klasirane_2023_combined['Класиране'] != 5]['Класиране'].unique():
         df_k = klasirane_2023_combined[klasirane_2023_combined['Класиране'] == k]
-        fig3.add_traces(go.Bar(x=df_k[x_column],
+        bars = go.Bar(x=df_k[x_column],
                                y=df_k['Код паралелка'],
                                name=f'{k} класиране',
                                text=df_k[x_column],
@@ -460,52 +489,63 @@ with c:
                                cliponaxis=False,
                                textfont=dict(size=12),
                                hoverinfo='x',
-                               orientation="h"))
+                               orientation="h")
+        fig3.add_trace(bars)
+
     placeholder = 550
-    for k in klasirane_2023_combined['Класиране'].unique():
+    annotation_position = 0.8
+    for k in klasirane_2023_combined[klasirane_2023_combined['Класиране'] >= 3]['Класиране'].unique():
         df_k = klasirane_2023_combined[klasirane_2023_combined['Класиране'] == k]
-        fig3.add_traces(go.Scatter(x=np.full(df_k.shape[0], placeholder),
-                                   y=df_k['Код паралелка'],
-                                   text=df_k[x2_column],
-                                   mode='text',
-                                   textfont_color='darkblue',
-                                   showlegend=False))
-        placeholder += 50
+        mesta = go.Scatter(x=np.full(df_k.shape[0], placeholder),
+                           y=df_k['Код паралелка'],
+                           text=df_k[x2_column],
+                           mode='text',
+                           textfont_color='black',
+                           textfont=dict(size=12),
+                           showlegend=False,
+                           )
+        placeholder += 30
+        fig3.add_trace(mesta)
+
+    #     fig3_final = fig3.add_annotation(dict(font=dict(color='red', size=12),
+    #                              x=annotation_position,
+    #                              y=1.4,
+    #                              showarrow=False,
+    #                              text=f"Свободни места за {k}кл",
+    #                              textangle=-60,
+    #                              xanchor='left',
+    #                              xref="paper",
+    #                              yref="paper"))
+    #     annotation_position += 0.05
 
     fig3.update_layout(
-        title='Класиране 2023 - детайли',
-        height=20000,
+        height=len(klasirane_2023_combined) * 12,
         hovermode='closest',
+        margin=dict(l=10, r=10, t=10),
         legend=dict(orientation="h",
-                    yanchor="auto",
-                    y=1,
-                    xanchor="auto"),
+                    yanchor="bottom",
+                    y=1.001),
         xaxis=dict(title='Минимален бал',
-                   titlefont_size=14,
-                   side="bottom",
-                   showticklabels=False),
+                   titlefont_size=12,
+                   automargin=True,
+                   side="top",
+                   showticklabels=False,
+                   showgrid=False),
         yaxis=dict(tickfont_size=12,
-                   autorange="reversed",
+                   automargin=True,
                    type='category',
+                   showgrid=False,
                    tickmode='array',
                    ticktext=yticks_text,
-                   tickvals=klasirane_2023_combined['Код паралелка']))
+                   range=[len(klasirane_2023_combined['Код паралелка'].unique()) - .5, -.5],
+                   tickvals=klasirane_2023_combined['Код паралелка'].unique(),
+                   )
+    )
     config = {
         'scrollZoom': False,
-        'scrollBar': {'enabled': True},
         'displayModeBar': False
     }
 
-    fig3.add_annotation(dict(font=dict(color='yellow', size=15),
-                             x=1,
-                             y=1,
-                             showarrow=False,
-                             text="Свободни места за 3кл",
-                             textangle=0,
-                             xanchor='left',
-                             xref="paper",
-                             yref="paper"))
-
-    st.plotly_chart(fig3, use_container_width=True, config=config)
-    st.write('</div>', unsafe_allow_html=True)
-
+    buffer = io.StringIO()
+    fig3.write_html(buffer, full_html=True, include_plotlyjs=True, config=config)
+    components.html(buffer.getvalue(), width=None, height=600, scrolling=True)
