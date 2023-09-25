@@ -325,8 +325,8 @@ klasirane_2023_combined.reset_index(drop=True, inplace=True)
 code_to_uchilishte_map = dict(klasirane_2023_combined[['Код паралелка', 'Училище']].drop_duplicates().values)
 code_to_paral_map = dict(zip(klasirane_2023_combined['Код паралелка'], klasirane_2023_combined['Паралелка']))
 
-yticks_text = [
-    f"{code}<br>{'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=40))}"
+yticks_text2 = [
+    f"{code}-{'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=25))}"
     for code in klasirane_2023_combined['Код паралелка'].unique()
 ]
 
@@ -335,14 +335,17 @@ yticks_text = [
 #     for code in klasirane_2023_combined['Код паралелка'].unique()
 # ]
 
-yticks_text2 = [
-    f"{code}<br>{code_to_paral_map[code][:45]}<br>{code_to_uchilishte_map[code][:45]}..."
-    for code in klasirane_2023_combined['Код паралелка'].unique()
-]
-
-# yticks_text = [
-#     f"{code} - {code_to_paral_map[code]:<40}..."  # Adjust the width as needed
+# yticks_text2 = [
+#     f"{code}<br>{code_to_paral_map[code][:45]}<br>{code_to_uchilishte_map[code][:45]}..."
 #     for code in klasirane_2023_combined['Код паралелка'].unique()
 # ]
 
+# yticks_text2 = [
+#     f"{code}<br>{code_to_paral_map[code]}<br>{code_to_uchilishte_map[code]}"
+#     for code in klasirane_2023_combined['Код паралелка'].unique()
+# ]
 
+# yticks_text2 = [
+#     f"{code} - {code_to_paral_map[code]:<40}..."  # Adjust the width as needed
+#     for code in klasirane_2023_combined['Код паралелка'].unique()
+# ]
