@@ -8,6 +8,7 @@ from data_klasirane_2023 import klasirane_2023_combined, yticks_text2_2023
 from data_klasirane_2022 import klasirane_2022_combined, yticks_text2_2022
 from datetime import datetime
 from plot_functions import fig3_visualization
+from streamlit.components.v1 import html
 
 
 pd.set_option('display.max_columns', None)
@@ -23,11 +24,9 @@ config = {
     'scrollZoom': False,
     'displayModeBar': False,
     'showAxisDragHandles': False,
-    'responsive': True,
-    # 'showTips': True,
 }
 
-st.markdown("<h1 style='text-align: center;'>Национално Външно Оценяване (НВО)<br><br></h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>Национално Външно Оценяване (НВО) - БОРД<br><br></h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center;'>Здравейте, aз съм Диана.<br>Преминавайки изпитанието на матурите(НВО) след 7ми клас с моя син, "
             "събрахме всички важни данни публикувани от МОН по темата за гр. София. За мен беше много полезно да видя цялата "
             "информация систематизирана и визуалиирана на едно място, за да вземем в процеса на кандидастване възможно"
@@ -35,7 +34,7 @@ st.markdown("<p style='text-align: center;'>Здравейте, aз съм Ди�
             "Радваме се да споделим тези данни и се надявам те да помогнат и на други. Тук ще намерите НВО резултатите - 2023 година, средния успех и броя на учениците, успеваемост, най-предпочитани "
             "и паралелки с минимален или никакъв интерес, свободни места за различните класирания, трендове и повече. "
             "Пишете ми в коментарите ако искате да добавим още информация или имате въпроси.<br>"
-            "УСПЕХ НА ВСИЧКИ!</p>", unsafe_allow_html=True)
+            "УСПЕХ НА ВСИЧКИ 😊</p>", unsafe_allow_html=True)
 st.write("Използван сайт на МОН: [ЛИНК](https://ruo-sofia-grad.com/%D0%B8%D0%B7%D0%BF%D0%B8%D1%82%D0%B8-%D0%B8-%D0%BF%D1%80%D0%B8%D0%B5%D0%BC-%D0%BD%D0%B0-%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D1%86%D0%B8/%D0%BF%D1%80%D0%B8%D0%B5%D0%BC-%D0%BD%D0%B0-%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D1%86%D0%B8/%D0%BF%D1%80%D0%B8%D0%B5%D0%BC-%D0%B2-viii-%D0%BA%D0%BB%D0%B0%D1%81/)")
 
 
@@ -134,7 +133,6 @@ with col1:
                        cliponaxis=False,
                        textfont=dict(size=12),
                        hoverinfo=None)
-    # bar_trace.update(textfont_color=bar_trace.marker.color)
 
     scatter_trace = go.Scatter(x=df_statistika_combined["Година"],
                                y=df_statistika_combined[avg_tochki],
@@ -149,8 +147,6 @@ with col1:
                                    color="rgb(239, 85, 59)",
                                ),
                                hoverinfo=None)
-    # scatter_trace.update(textfont_color=scatter_trace.marker.color)
-    # fig2.update_traces(textfont_color=dict(type='markers'))
     fig2.add_trace(bar_trace)
     fig2.add_trace(scatter_trace)
     fig2.update_traces(hoverinfo='none')
@@ -201,7 +197,7 @@ with c:
         x_column = 'Мин_бал_о'
         x2_column = "Места_общ_брой"
 
-    tab1, tab2 = st.tabs(["2023", "2022"])
+    tab1, tab2 = c.tabs(["2023", "2022"])
     with tab1:
         fig3_visualization(klasirane_combined=klasirane_2023_combined, yticks_text2=yticks_text2_2023, x_column=x_column, x2_column=x2_column)
     with tab2:
@@ -243,60 +239,40 @@ with st.form(key='form1', clear_on_submit=True):
             save_msg_history(msg_history)
 
 with c2:
-    # c2.write('Meow' + ' meow' * 300)
-    #
-    # scroll = """
-    # <style>
-    # .css-nahz7x {
-    #     overflow: scroll;
-    #     height: 100px;
-    # }
-    # </style>
-    # """
-
-    # c2.markdown(scroll, unsafe_allow_html=True)
-
-    from streamlit.components.v1 import html
-    #
+    # message_html = ""
     # for _, message in msg_history.iterrows():
-    #     messages = f"{message['name']} ({message['time']}) \n{message['text']}"
+    #     # You can use Font Awesome icons for the icons
+    #     # Replace 'fa-icon-name' with the desired Font Awesome icon name
+    #     icon_html = f'<i class="fas fa-icon-name" style="margin-right: 5px;"></i>'
     #
-    # lorem = (
-    #         """
-    #     <p>c2.write(messages)</p>
+    #     message_html += f"""
+    #     <div style="background-color: whitesmoke; border: 1px solid #ccc; border-radius: 10px; padding: 5px; margin: 5px; height: auto;">
+    #         {icon_html}
+    #         <p>{message['name']} ({message['time']})</p>
+    #         <p>{message['text']}</p>
+    #     </div>
     #     """
-    # )
     #
-    # html(lorem, height=100, scrolling=True)
+    # html_snippet = f"""
+    # <div style="height: 300px; overflow-y: scroll;">
+    #     {message_html}
+    # </div>
+    # """
+    # html(html_snippet, height=400, scrolling=True)
 
-    from streamlit.components.v1 import html
-
-    # Assuming msg_history is a DataFrame with message data
-
-    from streamlit.components.v1 import html
-
-    from streamlit.components.v1 import html
-
-    # Assuming msg_history is a DataFrame with message data
-
-    message_html = ""
+    # This is a non working scroll solution
     for _, message in msg_history.iterrows():
-        # You can use Font Awesome icons for the icons
-        # Replace 'fa-icon-name' with the desired Font Awesome icon name
-        icon_html = f'<i class="fas fa-icon-name" style="margin-right: 5px;"></i>'
+        c2.info(f"{message['name']}")
 
-        message_html += f"""
-        <div style="border: 1px solid #ccc; padding: 10px; margin: 5px;">
-            {icon_html}
-            <p>{message['name']} ({message['time']})</p>
-            <p>{message['text']}</p>
+    scroller = """
+        <div>
+            <style>
+            .css-y4qx5j.e1f1d6gn0 {
+                overflow-y: auto;
+                max-height: 100px;
+            }
+            </style>
         </div>
         """
 
-    html_snippet = f"""
-    <div style="height: 300px; overflow-y: scroll;">
-        {message_html}
-    </div>
-    """
-
-    html(html_snippet, height=400, scrolling=True)
+    c2.markdown(scroller, unsafe_allow_html=True)
