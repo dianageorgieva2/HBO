@@ -1,10 +1,11 @@
 import numpy as np
 import plotly.graph_objects as go
-import streamlit as st
 import io
 import streamlit.components.v1 as components
 import plotly.subplots as sp
 import textwrap
+import plotly.io as pio
+import streamlit as st
 
 
 # Visualization of fig3
@@ -104,8 +105,7 @@ def fig3_visualization(klasirane_combined, yticks_text2, x_column, x2_column):
         config = {
             'scrollZoom': False,
             'displayModeBar': False,
-            'responsive': True,
-            'showTips': True,
+            'showAxisDragHandles': False,
         }
 
         buffer = io.StringIO()
@@ -200,8 +200,15 @@ def fig3_visualization(klasirane_combined, yticks_text2, x_column, x2_column):
                         position=0,
                         )
         )
+        config = {
+            'scrollZoom': False,
+            'displayModeBar': False,
+            'showAxisDragHandles': False,
+        }
+        
+        pio.templates.default = "plotly"
         buffer = io.StringIO()
-        fig3.write_html(buffer, full_html=True, include_plotlyjs=True)
+        fig3.write_html(buffer, full_html=True, include_plotlyjs=True, config=config)
         components.html(buffer.getvalue(), width=None, height=600, scrolling=True)
 
     return fig3
