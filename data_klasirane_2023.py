@@ -149,6 +149,8 @@ mesta_2023_3_clean[["Места_о", "Места_м", "Места_д"]] = mesta_
 mesta_2023_3_clean["Класиране"] = 3
 mesta_2023_3_clean[["Места_о", "Места_м", "Места_д", "Класиране"]] = mesta_2023_3_clean[["Места_о", "Места_м", "Места_д", "Класиране"]].astype(int)
 mesta_2023_3_clean['Места_общ_брой'] = mesta_2023_3_clean[["Места_о", "Места_м", "Места_д"]].sum(axis=1)
+mesta_2023_3_clean['Места_общ_брой_м'] = mesta_2023_3_clean[["Места_о", "Места_м"]].sum(axis=1)
+mesta_2023_3_clean['Места_общ_брой_д'] = mesta_2023_3_clean[["Места_о", "Места_д"]].sum(axis=1)
 mesta_2023_3_clean["Година"] = "2023"
 mesta_2023_3_clean = mesta_2023_3_clean.sort_values(by='Код паралелка')
 mesta_2023_3_clean.reset_index(drop=True, inplace=True)
@@ -172,6 +174,8 @@ mesta_2023_4_clean[["Места_о", "Места_м", "Места_д"]] = mesta_
 mesta_2023_4_clean["Класиране"] = 4
 mesta_2023_4_clean[["Места_о", "Места_м", "Места_д", "Класиране"]] = mesta_2023_4_clean[["Места_о", "Места_м", "Места_д", "Класиране"]].astype(int)
 mesta_2023_4_clean['Места_общ_брой'] = mesta_2023_4_clean[["Места_о", "Места_м", "Места_д"]].sum(axis=1)
+mesta_2023_4_clean['Места_общ_брой_м'] = mesta_2023_4_clean[["Места_о", "Места_м"]].sum(axis=1)
+mesta_2023_4_clean['Места_общ_брой_д'] = mesta_2023_4_clean[["Места_о", "Места_д"]].sum(axis=1)
 mesta_2023_4_clean["Година"] = "2023"
 mesta_2023_4_clean = mesta_2023_4_clean.sort_values(by='Код паралелка')
 mesta_2023_4_clean.reset_index(drop=True, inplace=True)
@@ -198,6 +202,8 @@ mesta_2023_5_clean[["Места_о", "Места_м", "Места_д"]] = mesta_
 mesta_2023_5_clean["Класиране"] = 5
 mesta_2023_5_clean[["Места_о", "Места_м", "Места_д", "Класиране"]] = mesta_2023_5_clean[["Места_о", "Места_м", "Места_д", "Класиране"]].astype(int)
 mesta_2023_5_clean['Места_общ_брой'] = mesta_2023_5_clean[["Места_о", "Места_м", "Места_д"]].sum(axis=1)
+mesta_2023_5_clean['Места_общ_брой_м'] = mesta_2023_5_clean[["Места_о", "Места_м"]].sum(axis=1)
+mesta_2023_5_clean['Места_общ_брой_д'] = mesta_2023_5_clean[["Места_о", "Места_д"]].sum(axis=1)
 mesta_2023_5_clean["Година"] = "2023"
 mesta_2023_5_clean = mesta_2023_5_clean.sort_values(by='Код паралелка')
 mesta_2023_5_clean.reset_index(drop=True, inplace=True)
@@ -220,10 +226,10 @@ yticks_text2_2023 = [
     for code in klasirane_2023_combined['Код паралелка'].unique()
 ]
 
-# yticks_text2 = [
-#     f"{code}"
-#     for code in klasirane_2023_combined['Код паралелка'].unique()
-# ]
+yticks_text2_2023_mobile = [
+    f"{code}"
+    for code in klasirane_2023_combined['Код паралелка'].unique()
+]
 
 # yticks_text2 = [
 #     f"{code}<br>{code_to_paral_map[code][:45]}<br>{code_to_uchilishte_map[code][:45]}..."
