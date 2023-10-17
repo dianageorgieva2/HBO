@@ -19,7 +19,7 @@ pd.options.display.float_format = '{:,.2f}'.format
 
 
 # Dashboard layout
-pio.templates.default = "seaborn"
+pio.templates.default = "simple_white"
 st.set_page_config(layout="wide", page_title='НВО', page_icon="favicon.ico")
 config = {
     'scrollZoom': False,
@@ -33,41 +33,44 @@ hide_streamlit_style = """
         footer {visibility: hidden;}
         .stDeployButton {visibility: hidden;}
         .stActionButton {visibility: hidden;}
+        [data-testid="stHeader"] {visibility: hidden;}
+        [data-testid="baseButton-secondaryFormSubmit"] {background-color: rgb(253, 211, 139);}
     </style>
     """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 
-def get_base64(bin_file):
-    with open(bin_file, 'rb') as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
-
-
-def set_background(png_file):
-    bin_str = get_base64(png_file)
-    page_bg_img = '''
-    <style>
-    .stApp {
-    background-image: url("data:image/png;base64,%s");
-    background-size: cover;
-    }
-    
-    [data-testid="stHeader"] {
-    background-color: rgba(0,0,0,0);
-    }
-    
-    [data-testid="baseButton-secondaryFormSubmit"] {
-    background-color: rgb(195, 195, 195);
-    }
-    </style>
-    ''' % bin_str
-    st.markdown(page_bg_img, unsafe_allow_html=True)
-
-
-set_background('images/bg_image.png')
+# # Set background image (very hard to visualise properly)
+# def get_base64(bin_file):
+#     with open(bin_file, 'rb') as f:
+#         data = f.read()
+#     return base64.b64encode(data).decode()
+#
+#
+# def set_background(png_file):
+#     bin_str = get_base64(png_file)
+#     page_bg_img = '''
+#     <style>
+#     .main {
+#     background-image: url("data:image/png;base64,%s");
+#     background-size: auto;
+#     background-attachment: local;
+#     background-repeat: no-repeat;
+#     background-position: top left;
+#     }
+#
+#     [data-testid="baseButton-secondaryFormSubmit"] {
+#     background-color: rgb(195, 195, 195);
+#     }
+#     </style>
+#     ''' % bin_str
+#     st.markdown(page_bg_img, unsafe_allow_html=True)
+#
+#
+# set_background('images/bg_image_4.png')
 
 header = st.container()
+intro = st.container()
 st.divider()
 visio_1 = st.container()
 st.divider()
@@ -75,10 +78,47 @@ visio_2 = st.container()
 st.divider()
 comments = st.container()
 
-# Header definition
+with st.sidebar:
+    st.markdown("<h1 style='text-left: center;'>Помощна навигация</h1>", unsafe_allow_html=True)
+    selected_option = st.radio("Избери опция:", ('Ученици(общо)', 'Ученици(младежи)*', 'Ученици(девойки)*'),
+                               key="radio_button")
+    if selected_option == 'Ученици(младежи)*':
+        y_column = 'общо_м'
+        avg_tochki = "tochki_avg_m"
+        x_column = 'Мин_бал_м'
+        x2_column = "Места_общ_брой_м"
+    elif selected_option == 'Ученици(девойки)*':
+        y_column = 'общо_д'
+        avg_tochki = "tochki_avg_w"
+        x_column = 'Мин_бал_ж'
+        x2_column = "Места_общ_брой_д"
+    else:
+        y_column = 'общо'
+        avg_tochki = "tochki_avg_o"
+        x_column = 'Мин_бал_о'
+        x2_column = "Места_общ_брой"
+
+    st.markdown(
+        "<p style='text-align: left; font-size: 10px;'>(*Свободните места за младежи и девойки са показани като сбор на местата"
+        " с квотa и местата на общо основание.)</p>", unsafe_allow_html=True)
+    st.divider()
+    st.write("Използван сайт на МОН: [ЛИНК](https://ruo-sofia-grad.com/%D0%B8%D0%B7%D0%BF%D0%B8%D1%82%D0%B8-%D0%B8-"
+             "%D0%BF%D1%80%D0%B8%D0%B5%D0%BC-%D0%BD%D0%B0-%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D1%86%D0%B8/%D0%BF%D1%80%"
+             "D0%B8%D0%B5%D0%BC-%D0%BD%D0%B0-%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D1%86%D0%B8/%D0%BF%D1%80%D0%B8%D0%B5%D0%BC-"
+             "%D0%B2-viii-%D0%BA%D0%BB%D0%B0%D1%81/)")
+
+
 with header:
-    st.markdown("<h1 style='text-align: center;'>Дашборд НВО<br></h1>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align: center;'>(Национално Външно Оценяване)<br><br></h3>", unsafe_allow_html=True)
+    col_a, col_b = st.columns([2, 8])
+    with col_a:
+        col_a_1, col_a_2, col_a_3 = st.columns([1, 98, 1])
+        col_a_2.image('images/bg_image_4.png')
+    with col_b:
+        st.markdown("<h1 style='text-align: left;'>НВО Навигатор</h1>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: left;'>(Национално Външно Оценяване)<br><br></h3>", unsafe_allow_html=True)
+
+# Intro definition
+with intro:
     st.markdown("<p style='text-align: center;'>Здравей, aз съм Диана.<br>Преминавайки изпитанието на матурите(НВО) след "
                 "7ми клас с моя син, събрахме всички важни данни публикувани от МОН по темата за гр. София. За мен беше "
                 "много полезно да видя цялата информация систематизирана и визуалиирана на едно място, за да вземем в "
@@ -88,10 +128,7 @@ with header:
                 "и паралелки с минимален или никакъв интерес, свободни места за различните класирания, трендове и повече. "
                 "Пишете ми в коментарите ако искате да добавим още информация или имате въпроси.<br>"
                 "УСПЕХ НА ВСИЧКИ 😊</p>", unsafe_allow_html=True)
-    st.write("Използван сайт на МОН: [ЛИНК](https://ruo-sofia-grad.com/%D0%B8%D0%B7%D0%BF%D0%B8%D1%82%D0%B8-%D0%B8-"
-             "%D0%BF%D1%80%D0%B8%D0%B5%D0%BC-%D0%BD%D0%B0-%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D1%86%D0%B8/%D0%BF%D1%80%"
-             "D0%B8%D0%B5%D0%BC-%D0%BD%D0%B0-%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D1%86%D0%B8/%D0%BF%D1%80%D0%B8%D0%B5%D0%BC-"
-             "%D0%B2-viii-%D0%BA%D0%BB%D0%B0%D1%81/)")
+
 
 # Create visualization_1 (fig1 and fig2)
 with visio_1:
@@ -100,15 +137,6 @@ with visio_1:
     # Data visualization fig1
     with col2:
         st.markdown("<h3 style='text-align: center;'>НВО Успеваемост</h3>", unsafe_allow_html=True)
-
-        selected_column = st.radio("Избери опция:", ('Ученици(общо)', 'Ученици(младежи)', 'Ученици(девойки)'),
-                                   key="col1_radio", horizontal=True)
-        if selected_column == 'Ученици(младежи)':
-            y_column = 'общо_м'
-        elif selected_column == 'Ученици(девойки)':
-            y_column = 'общо_д'
-        else:
-            y_column = 'общо'
 
         fig = go.Figure()
         histogram = go.Histogram(
@@ -144,7 +172,7 @@ with visio_1:
             hovermode="x unified",
             hoverlabel=dict(font_size=10),
             paper_bgcolor="rgba(0, 0, 0, 0)",
-            plot_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0, 0, 0, 0)",
             xaxis=dict(
                 title='Точки',
                 titlefont_size=14,
@@ -155,7 +183,8 @@ with visio_1:
                 title='Ученици (бр)',
                 titlefont_size=14,
                 tickfont_size=12,
-                fixedrange=True,),
+                fixedrange=True,
+                showline=False),
             legend=dict(orientation="h",
                         yanchor="auto",
                         y=1.2,
@@ -167,18 +196,6 @@ with visio_1:
     # Data visualization fig2
     with col1:
         st.markdown("<h3 style='text-align: center;'>НВО статистика</h3>", unsafe_allow_html=True)
-
-        selected_option = st.radio("Избери опция:", ('Ученици(общо)', 'Ученици(младежи)', 'Ученици(девойки)'),
-                                   key="col2_radio", horizontal=True)
-        if selected_option == 'Ученици(младежи)':
-            y_column = 'общо_м'
-            avg_tochki = "tochki_avg_m"
-        elif selected_option == 'Ученици(девойки)':
-            y_column = 'общо_д'
-            avg_tochki = "tochki_avg_w"
-        else:
-            y_column = 'общо'
-            avg_tochki = "tochki_avg_o"
 
         fig2 = go.Figure()
         bar_trace = go.Bar(x=df_statistika_combined["Година"],
@@ -218,7 +235,7 @@ with visio_1:
                 tickvals=df_statistika_combined.Година,
                 ticktext=df_statistika_combined.Година.astype(str),
                 fixedrange=True,),
-            yaxis=dict(showticklabels=False,fixedrange=True,),
+            yaxis=dict(showticklabels=False, fixedrange=True,),
             yaxis2=dict(
                 showticklabels=False,
                 anchor='free',
@@ -226,7 +243,8 @@ with visio_1:
                 side='right',
                 position=1,
                 range=(df_statistika_combined[avg_tochki].min() - 10, df_statistika_combined[avg_tochki].max() + 10),
-                fixedrange=True,),
+                fixedrange=True,
+                showline=False),
             legend=dict(orientation="h",
                           yanchor="auto",
                           y=1.2,
@@ -241,19 +259,6 @@ with visio_1:
 visio_2.markdown("<h3 style='text-align: center;'>Детайли - класиране</h3>", unsafe_allow_html=True)
 
 with visio_2:
-    selected_option = visio_2.radio("Избери опция:", ('Ученици(общо)', 'Ученици(младежи)*', 'Ученици(девойки)*'),
-                               key="fig3_radio", horizontal=True)
-    if selected_option == 'Ученици(младежи)*':
-        x_column = 'Мин_бал_м'
-        x2_column = "Места_общ_брой_м"
-    elif selected_option == 'Ученици(девойки)*':
-        x_column = 'Мин_бал_ж'
-        x2_column = "Места_общ_брой_д"
-    else:
-        x_column = 'Мин_бал_о'
-        x2_column = "Места_общ_брой"
-    visio_2.markdown("<p style='text-align: left; font-size: 10px;'>(*Свободните места за младежи и девойки са показани като сбор на местата"
-               " с квотa и местата на общо основание.)</p>", unsafe_allow_html=True)
 
     # # Option for showing 2022 year results with radio buttons, but I don't like it
     # selected_option = c.radio("", ('2023', '2022'), key="fig3_radio_years", horizontal=True)
@@ -351,14 +356,3 @@ with comments:
     #     """
     #
     # comments.markdown(scroller, unsafe_allow_html=True)
-
-
-
-
-
-
-
-
-
-
-
