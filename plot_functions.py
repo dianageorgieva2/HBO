@@ -9,7 +9,7 @@ import plotly
 
 
 # Visualization of fig3 for desktop
-def fig3_visualization(klasirane_combined, yticks_text2, x_column, x2_column):
+def fig3_visualization(klasirane_combined, x_column, x2_column):
     multiselect = st.multiselect("Ако искаш да филтрираш по определено училище/а, избери от списъка:",
                                  options=klasirane_combined['Училище'].drop_duplicates().sort_values(),
                                  placeholder="Избери училище/а")
@@ -26,6 +26,9 @@ def fig3_visualization(klasirane_combined, yticks_text2, x_column, x2_column):
             #     for code in df_k['Код паралелка'].unique()]
             hover_text = [f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=45))}<br>{'<br>'.join(textwrap.wrap(code_to_uchilishte_map[code], width=45))}"
                 for code in df_k['Код паралелка'].unique()]
+            yticks_text2_2023 = [
+                f"{code}-{'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=25))}"
+                for code in klasirane_combined['Код паралелка'].unique()]
 
             bars = go.Bar(x=df_k[x_column],
                                    y=df_k['Код паралелка'],
@@ -46,6 +49,9 @@ def fig3_visualization(klasirane_combined, yticks_text2, x_column, x2_column):
         color_position = 0
         for k in klasirane_combined['Класиране'].unique():
             df_k = klasirane_combined[klasirane_combined['Класиране'] == k]
+            yticks_text2_2023 = [
+                f"{code}-{'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=25))}"
+                for code in klasirane_combined['Код паралелка'].unique()]
             mesta = go.Scatter(x=np.full(len(df_k), 'Свободни<br>места'),
                                    y=df_k['Код паралелка'],
                                     name=f'{k} класиране',
@@ -95,7 +101,7 @@ def fig3_visualization(klasirane_combined, yticks_text2, x_column, x2_column):
                            showgrid=False,
                            tickmode='array',
                            side='left',
-                           ticktext=yticks_text2,
+                           ticktext=yticks_text2_2023,
                            range=[len(klasirane_combined['Код паралелка'].unique()) - .5, -.5],
                            tickvals=klasirane_combined['Код паралелка'].unique(),
                            ),
@@ -152,6 +158,9 @@ def fig3_visualization(klasirane_combined, yticks_text2, x_column, x2_column):
         color_position = 0
         for k in df_multiselect['Класиране'].unique():
             df_k = df_multiselect[df_multiselect['Класиране'] == k]
+            yticks_text2_2023_multi = [
+                f"{code}-{'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=25))}"
+                for code in df_multiselect['Код паралелка'].unique()]
             mesta = go.Scatter(x=np.full(len(df_k), 'Свободни<br>места'),
                                y=df_k['Код паралелка'],
                                name=f'{k} класиране',
@@ -201,7 +210,7 @@ def fig3_visualization(klasirane_combined, yticks_text2, x_column, x2_column):
                            showgrid=False,
                            tickmode='array',
                            side='left',
-                           ticktext=yticks_text2,
+                           ticktext=yticks_text2_2023_multi,
                            range=[len(df_multiselect['Код паралелка'].unique()) - .5, -.5],
                            tickvals=df_multiselect['Код паралелка'].unique(),
                            ),
@@ -228,7 +237,7 @@ def fig3_visualization(klasirane_combined, yticks_text2, x_column, x2_column):
 
 
 # Visualization of fig3 for mobile
-def fig3_visualization_mobile(klasirane_combined, yticks_text2_mobile, x_column, x2_column):
+def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
     multiselect = st.multiselect("Ако искаш да филтрираш по определено училище/а, избери от списъка:",
                                  options=klasirane_combined['Училище'].drop_duplicates().sort_values(),
                                  placeholder="Избери училище/а")
@@ -266,6 +275,9 @@ def fig3_visualization_mobile(klasirane_combined, yticks_text2_mobile, x_column,
         color_position = 0
         for k in klasirane_combined['Класиране'].unique():
             df_k = klasirane_combined[klasirane_combined['Класиране'] == k]
+            yticks_text2_2023_mobile = [
+                f"{code}"
+                for code in klasirane_combined['Код паралелка'].unique()]
             mesta = go.Scatter(x=np.full(len(df_k), 'Свободни<br>места'),
                                y=df_k['Код паралелка'],
                                name=f'{k} класиране',
@@ -315,7 +327,7 @@ def fig3_visualization_mobile(klasirane_combined, yticks_text2_mobile, x_column,
                            showgrid=False,
                            tickmode='array',
                            side='left',
-                           ticktext=yticks_text2_mobile,
+                           ticktext=yticks_text2_2023_mobile,
                            range=[len(klasirane_combined['Код паралелка'].unique()) - .5, -.5],
                            tickvals=klasirane_combined['Код паралелка'].unique(),
                            ),
@@ -372,6 +384,9 @@ def fig3_visualization_mobile(klasirane_combined, yticks_text2_mobile, x_column,
         color_position = 0
         for k in df_multiselect['Класиране'].unique():
             df_k = df_multiselect[df_multiselect['Класиране'] == k]
+            yticks_text2_2023_mobile_multi = [
+                f"{code}"
+                for code in df_multiselect['Код паралелка'].unique()]
             mesta = go.Scatter(x=np.full(len(df_k), 'Свободни<br>места'),
                                y=df_k['Код паралелка'],
                                name=f'{k} класиране',
@@ -421,7 +436,7 @@ def fig3_visualization_mobile(klasirane_combined, yticks_text2_mobile, x_column,
                            showgrid=False,
                            tickmode='array',
                            side='left',
-                           ticktext=yticks_text2_mobile,
+                           ticktext=yticks_text2_2023_mobile_multi,
                            range=[len(df_multiselect['Код паралелка'].unique()) - .5, -.5],
                            tickvals=df_multiselect['Код паралелка'].unique(),
                            ),
