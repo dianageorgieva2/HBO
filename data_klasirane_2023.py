@@ -22,7 +22,7 @@ kodove_2023 = pd.read_csv('klasirane/2023/Za_saita_s_kodove_baloobrazuvane_2023-
 # Data Cleaning
 
 # Clean model for codes
-kodove_2023_cleaan = kodove_2023.rename(columns={
+kodove_2023_clean = kodove_2023.rename(columns={
                            "Unnamed: 1": "РАЙОН",
                            "Unnamed: 2": "Училище",
                            "Unnamed: 3": "Код паралелка",
@@ -34,13 +34,11 @@ kodove_2023_cleaan = kodove_2023.rename(columns={
                            "Unnamed: 9": "Общо основание",
                            "Unnamed: 10": "Младежи",
                            "Unnamed: 11": "Девойки"})
-kodove_2023_cleaan = kodove_2023_cleaan.drop(['СПИСЪК НА ПАРАЛЕЛКИТЕ С ДЪРЖАВЕН ПЛАН-ПРИЕМ В VIII КЛАС ЗА УЧЕБНАТА 2023/2024 ГОДИНА В ОБЛАСТ СОФИЯ-ГРАД \nс кодове и балообразуване'], axis=1)
-kodove_2023_cleaan = kodove_2023_cleaan[kodove_2023_cleaan["Код паралелка"].notna()]
-kodove_2023_cleaan = kodove_2023_cleaan.drop([1], axis=0)
-kodove_2023_cleaan["Година"] = "2023"
-kodove_2023_cleaan[["Общо основание", "Младежи", "Девойки"]] = kodove_2023_cleaan[["Общо основание", "Младежи", "Девойки"]].astype(int)
-kodove_2023_cleaan = kodove_2023_cleaan.sort_values(by='Код паралелка')
-kodove_2023_cleaan.reset_index(drop=True, inplace=True)
+kodove_2023_clean = kodove_2023_clean.drop(['СПИСЪК НА ПАРАЛЕЛКИТЕ С ДЪРЖАВЕН ПЛАН-ПРИЕМ В VIII КЛАС ЗА УЧЕБНАТА 2023/2024 ГОДИНА В ОБЛАСТ СОФИЯ-ГРАД \nс кодове и балообразуване'], axis=1)
+kodove_2023_clean = kodove_2023_clean[kodove_2023_clean["Код паралелка"].notna()]
+kodove_2023_clean = kodove_2023_clean.drop([1], axis=0)
+kodove_2023_clean["Година"] = "2023"
+kodove_2023_clean[["Общо основание", "Младежи", "Девойки"]] = kodove_2023_clean[["Общо основание", "Младежи", "Девойки"]].astype(int)
 
 klasirane_2023_1_clean = klasirane_2023_1.rename(columns={
                            "Unnamed: 1": "Код училище",
@@ -62,14 +60,31 @@ klasirane_2023_1_clean[["Мин_бал_о", "Мин_бал_м", "Мин_бал_�
 klasirane_2023_1_clean["Класиране"] = '1'
 klasirane_2023_1_clean["Класиране"] = klasirane_2023_1_clean["Класиране"].astype(int)
 klasirane_2023_1_clean["Година"] = "2023"
+
+# Exclude items in kodove_2023_clean "Код паралелка" which don't exist in the rest of the files.
+kodove_2023_clean = kodove_2023_clean[kodove_2023_clean['Код паралелка'].isin(klasirane_2023_1_clean['Код паралелка'])]
+kodove_2023_clean = kodove_2023_clean.sort_values(by='Код паралелка')
+kodove_2023_clean.reset_index(drop=True, inplace=True)
+
+klasirane_2023_1_clean = klasirane_2023_1_clean.sort_values(by='Код паралелка')
+klasirane_2023_1_clean.reset_index(drop=True, inplace=True)
+
+# kodove_set = set(kodove_2023_clean["Код паралелка"])
+# klasirane_set = set(klasirane_2023_1_clean["Код паралелка"])
+#
+# # Find and print items that are in kodove_set but not in klasirane_set
+# different_items = kodove_set - klasirane_set
+#
+# for k in different_items:
+#     print(k)
+
+klasirane_2023_1_clean[["Места_о", "Места_м", "Места_д"]] = kodove_2023_clean[["Общо основание", "Младежи", "Девойки"]]
+klasirane_2023_1_clean['Места_общ_брой'] = klasirane_2023_1_clean[["Места_о", "Места_м", "Места_д"]].sum(axis=1)
+klasirane_2023_1_clean['Места_общ_брой_м'] = klasirane_2023_1_clean[["Места_о", "Места_м"]].sum(axis=1)
+klasirane_2023_1_clean['Места_общ_брой_д'] = klasirane_2023_1_clean[["Места_о", "Места_д"]].sum(axis=1)
 klasirane_2023_1_clean = klasirane_2023_1_clean.sort_values(by='Мин_бал_о', ascending=False)
 klasirane_2023_1_clean.reset_index(drop=True, inplace=True)
 klasirane_2023_1_clean = klasirane_2023_1_clean.sort_values(by='Код паралелка')
-# kodove_2023_cleaan = kodove_2023_cleaan[kodove_2023_cleaan['Код паралелка'].isin(klasirane_2023_1_clean['Код паралелка']) == True]
-# klasirane_2023_1_clean[["Места_о", 'Места_м', "Места_д"]] = kodove_2023_cleaan[["Общо основание", "Младежи", "Девойки"]]
-# klasirane_2023_1_clean['Места_общ_брой'] = klasirane_2023_1_clean[["Места_о", "Места_м", "Места_д"]].sum(axis=1)
-# klasirane_2023_1_clean['Места_общ_брой_м'] = klasirane_2023_1_clean[["Места_о", "Места_м"]].sum(axis=1)
-# klasirane_2023_1_clean['Места_общ_брой_д'] = klasirane_2023_1_clean[["Места_о", "Места_д"]].sum(axis=1)
 
 klasirane_2023_2_clean = klasirane_2023_2.rename(columns={
                            "Unnamed: 1": "Код училище",
@@ -92,6 +107,10 @@ klasirane_2023_2_clean["Класиране"] = klasirane_2023_2_clean["Клас�
 klasirane_2023_2_clean["Година"] = "2023"
 klasirane_2023_2_clean = klasirane_2023_2_clean.sort_values(by='Код паралелка')
 klasirane_2023_2_clean.reset_index(drop=True, inplace=True)
+klasirane_2023_2_clean[["Места_о", "Места_м", "Места_д"]] = '-'
+klasirane_2023_2_clean['Места_общ_брой'] = '-'
+klasirane_2023_2_clean['Места_общ_брой_м'] = '-'
+klasirane_2023_2_clean['Места_общ_брой_д'] = '-'
 klasirane_2023_2_clean.index = klasirane_2023_1_clean.index
 
 klasirane_2023_3_clean = klasirane_2023_3.rename(columns={
@@ -213,25 +232,12 @@ mesta_2023_5_clean['Места_общ_брой'] = mesta_2023_5_clean[["Мест
 mesta_2023_5_clean['Места_общ_брой_м'] = mesta_2023_5_clean[["Места_о", "Места_м"]].sum(axis=1)
 mesta_2023_5_clean['Места_общ_брой_д'] = mesta_2023_5_clean[["Места_о", "Места_д"]].sum(axis=1)
 mesta_2023_5_clean["Година"] = "2023"
+mesta_2023_5_clean['Класиране'] = 5
 mesta_2023_5_clean = mesta_2023_5_clean.sort_values(by='Код паралелка')
 mesta_2023_5_clean.reset_index(drop=True, inplace=True)
 mesta_2023_5_clean.index = klasirane_2023_1_clean.index
-mesta_2023_5_clean_ordered = pd.concat([klasirane_2023_1_clean, mesta_2023_5_clean], axis=1, copy=False, ignore_index=False)
-mesta_2023_5_clean_ordered = mesta_2023_5_clean_ordered.sort_index()
-mesta_2023_5_clean_ordered = mesta_2023_5_clean_ordered.loc[:, ~mesta_2023_5_clean_ordered.columns.duplicated()].copy()
-mesta_2023_5_clean_ordered = mesta_2023_5_clean_ordered.drop(['Мин_бал_о', 'Мин_бал_м', 'Мин_бал_ж', 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж'], axis=1)
-mesta_2023_5_clean_ordered['Класиране'] = 5
 
 # Data preparation
-klasirane_2023_combined = pd.concat([klasirane_2023_1_clean.sort_index(), klasirane_2023_2_clean.sort_index(), klasirane_2023_3_clean_plus.sort_index(), klasirane_2023_4_clean_plus.sort_index(), mesta_2023_5_clean_ordered.sort_index()], axis=0)
+klasirane_2023_combined = pd.concat([klasirane_2023_1_clean.sort_index(), klasirane_2023_2_clean.sort_index(), klasirane_2023_3_clean_plus.sort_index(), klasirane_2023_4_clean_plus.sort_index(), mesta_2023_5_clean.sort_index()], axis=0)
 klasirane_2023_combined.reset_index(drop=True, inplace=True)
 
-
-# kodove_set = set(kodove_2023_cleaan["Код паралелка"])
-# klasirane_set = set(klasirane_2023_1_clean["Код паралелка"])
-#
-# # Find and print items that are in kodove_set but not in klasirane_set
-# different_items = kodove_set - klasirane_set
-#
-# for k in different_items:
-#     print(k)
