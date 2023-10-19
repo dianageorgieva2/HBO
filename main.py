@@ -4,7 +4,7 @@ import streamlit as st
 import plotly.io as pio
 from data_statistika import stats_2020_clean, stats_2021_clean, stats_2022_clean, stats_2023_clean, \
     df_statistika_combined
-from data_klasirane_2023 import klasirane_2023_combined, yticks_text2_2023, yticks_text2_2023_mobile
+from data_klasirane_2023 import klasirane_2023_combined
 from data_klasirane_2022 import klasirane_2022_combined, yticks_text2_2022, yticks_text2_2022_mobile
 from datetime import datetime
 from plot_functions import fig3_visualization, fig3_visualization_mobile
@@ -275,12 +275,10 @@ with visio_2:
     with tab1:
         if mobile_toggle:
             fig3_visualization_mobile(klasirane_combined=klasirane_2023_combined,
-                                      yticks_text2_mobile=yticks_text2_2023_mobile,
                                       x_column=x_column,
                                       x2_column=x2_column)
         else:
             fig3_visualization(klasirane_combined=klasirane_2023_combined,
-                               yticks_text2=yticks_text2_2023,
                                x_column=x_column,
                                x2_column=x2_column)
     with tab2:
