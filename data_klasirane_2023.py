@@ -20,6 +20,28 @@ klasirane_2023_4 = pd.read_csv('klasirane/2023/min_max_po_par_4_etap_2023 (1).cs
 kodove_2023 = pd.read_csv('klasirane/2023/Za_saita_s_kodove_baloobrazuvane_2023-12.csv')
 
 # Data Cleaning
+
+# Clean model for codes
+kodove_2023_cleaan = kodove_2023.rename(columns={
+                           "Unnamed: 1": "РАЙОН",
+                           "Unnamed: 2": "Училище",
+                           "Unnamed: 3": "Код паралелка",
+                           "Unnamed: 4": "Паралелка",
+                           "Unnamed: 5": "Вид на паралелката",
+                           "Unnamed: 6": "Балообразуване",
+                           "Unnamed: 7": "Форма на обучение",
+                           "Unnamed: 8": "Брой паралелки",
+                           "Unnamed: 9": "Общо основание",
+                           "Unnamed: 10": "Младежи",
+                           "Unnamed: 11": "Девойки"})
+kodove_2023_cleaan = kodove_2023_cleaan.drop(['СПИСЪК НА ПАРАЛЕЛКИТЕ С ДЪРЖАВЕН ПЛАН-ПРИЕМ В VIII КЛАС ЗА УЧЕБНАТА 2023/2024 ГОДИНА В ОБЛАСТ СОФИЯ-ГРАД \nс кодове и балообразуване'], axis=1)
+kodove_2023_cleaan = kodove_2023_cleaan[kodove_2023_cleaan["Код паралелка"].notna()]
+kodove_2023_cleaan = kodove_2023_cleaan.drop([1], axis=0)
+kodove_2023_cleaan["Година"] = "2023"
+kodove_2023_cleaan[["Общо основание", "Младежи", "Девойки"]] = kodove_2023_cleaan[["Общо основание", "Младежи", "Девойки"]].astype(int)
+kodove_2023_cleaan = kodove_2023_cleaan.sort_values(by='Код паралелка')
+kodove_2023_cleaan.reset_index(drop=True, inplace=True)
+
 klasirane_2023_1_clean = klasirane_2023_1.rename(columns={
                            "Unnamed: 1": "Код училище",
                            "Unnamed: 2": "Училище",
@@ -43,6 +65,11 @@ klasirane_2023_1_clean["Година"] = "2023"
 klasirane_2023_1_clean = klasirane_2023_1_clean.sort_values(by='Мин_бал_о', ascending=False)
 klasirane_2023_1_clean.reset_index(drop=True, inplace=True)
 klasirane_2023_1_clean = klasirane_2023_1_clean.sort_values(by='Код паралелка')
+# kodove_2023_cleaan = kodove_2023_cleaan[kodove_2023_cleaan['Код паралелка'].isin(klasirane_2023_1_clean['Код паралелка']) == True]
+# klasirane_2023_1_clean[["Места_о", 'Места_м', "Места_д"]] = kodove_2023_cleaan[["Общо основание", "Младежи", "Девойки"]]
+# klasirane_2023_1_clean['Места_общ_брой'] = klasirane_2023_1_clean[["Места_о", "Места_м", "Места_д"]].sum(axis=1)
+# klasirane_2023_1_clean['Места_общ_брой_м'] = klasirane_2023_1_clean[["Места_о", "Места_м"]].sum(axis=1)
+# klasirane_2023_1_clean['Места_общ_брой_д'] = klasirane_2023_1_clean[["Места_о", "Места_д"]].sum(axis=1)
 
 klasirane_2023_2_clean = klasirane_2023_2.rename(columns={
                            "Unnamed: 1": "Код училище",
@@ -112,25 +139,6 @@ klasirane_2023_4_clean["Година"] = "2023"
 klasirane_2023_4_clean = klasirane_2023_4_clean.sort_values(by='Код паралелка')
 klasirane_2023_4_clean.reset_index(drop=True, inplace=True)
 klasirane_2023_4_clean.index = klasirane_2023_1_clean.index
-
-# For future functionalities ready to use cleaning model of the codes
-# kodove_2023_cleaan = kodove_2023.rename(columns={
-#                            "Unnamed: 1": "РАЙОН",
-#                            "Unnamed: 2": "Училище",
-#                            "Unnamed: 3": "Код паралелка",
-#                            "Unnamed: 4": "Паралелка",
-#                            "Unnamed: 5": "Вид на паралелката",
-#                            "Unnamed: 6": "Балообразуване",
-#                            "Unnamed: 7": "Форма на обучение",
-#                            "Unnamed: 8": "Брой паралелки",
-#                            "Unnamed: 9": "Общо основание",
-#                            "Unnamed: 10": "Младежи",
-#                            "Unnamed: 11": "Девойки"})
-# kodove_2023_cleaan = kodove_2023_cleaan.drop(['СПИСЪК НА ПАРАЛЕЛКИТЕ С ДЪРЖАВЕН ПЛАН-ПРИЕМ В VIII КЛАС ЗА УЧЕБНАТА 2023/2024 ГОДИНА В ОБЛАСТ СОФИЯ-ГРАД \nс кодове и балообразуване'], axis=1)
-# kodove_2023_cleaan = kodove_2023_cleaan[kodove_2023_cleaan["Код паралелка"].notna()]
-# kodove_2023_cleaan = kodove_2023_cleaan.drop([1], axis=0)
-# kodove_2023_cleaan["Година"] = "2023"
-# kodove_2023_cleaan.reset_index(drop=True, inplace=True)
 
 # Svobodni mesta data clean up
 mesta_2023_3_clean = mesta_2023_3.drop([mesta_2023_3.columns[0], 'Unnamed: 5'], axis=1)
@@ -218,32 +226,12 @@ mesta_2023_5_clean_ordered['Класиране'] = 5
 klasirane_2023_combined = pd.concat([klasirane_2023_1_clean.sort_index(), klasirane_2023_2_clean.sort_index(), klasirane_2023_3_clean_plus.sort_index(), klasirane_2023_4_clean_plus.sort_index(), mesta_2023_5_clean_ordered.sort_index()], axis=0)
 klasirane_2023_combined.reset_index(drop=True, inplace=True)
 
-code_to_uchilishte_map = dict(klasirane_2023_combined[['Код паралелка', 'Училище']].drop_duplicates().values)
-code_to_paral_map = dict(zip(klasirane_2023_combined['Код паралелка'], klasirane_2023_combined['Паралелка']))
 
-yticks_text2_2023 = [
-    f"{code}-{'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=25))}"
-    for code in klasirane_2023_combined['Код паралелка'].unique()
-]
-
-yticks_text2_2023_mobile = [
-    f"{code}"
-    for code in klasirane_2023_combined['Код паралелка'].unique()
-]
-
-# yticks_text2 = [
-#     f"{code}<br>{code_to_paral_map[code][:45]}<br>{code_to_uchilishte_map[code][:45]}..."
-#     for code in klasirane_2023_combined['Код паралелка'].unique()
-# ]
-
-# yticks_text2 = [
-#     f"{code}<br>{code_to_paral_map[code]}<br>{code_to_uchilishte_map[code]}"
-#     for code in klasirane_2023_combined['Код паралелка'].unique()
-# ]
-
-# yticks_text2 = [
-#     f"{code} - {code_to_paral_map[code]:<40}..."  # Adjust the width as needed
-#     for code in klasirane_2023_combined['Код паралелка'].unique()
-# ]
-
-
+# kodove_set = set(kodove_2023_cleaan["Код паралелка"])
+# klasirane_set = set(klasirane_2023_1_clean["Код паралелка"])
+#
+# # Find and print items that are in kodove_set but not in klasirane_set
+# different_items = kodove_set - klasirane_set
+#
+# for k in different_items:
+#     print(k)
