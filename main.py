@@ -10,7 +10,7 @@ from datetime import datetime
 from plot_functions import fig3_visualization, fig3_visualization_mobile
 from streamlit.components.v1 import html, components
 import base64
-
+from pymongo import MongoClient
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
@@ -107,27 +107,28 @@ with st.sidebar:
              "D0%B8%D0%B5%D0%BC-%D0%BD%D0%B0-%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D1%86%D0%B8/%D0%BF%D1%80%D0%B8%D0%B5%D0%BC-"
              "%D0%B2-viii-%D0%BA%D0%BB%D0%B0%D1%81/)")
 
-
 with header:
-    col_a, col_b = st.columns([2, 8])
+    col_a, col_b = st.columns([2.5, 7.5])
     with col_a:
-        col_a_1, col_a_2, col_a_3 = st.columns([1, 98, 1])
+        col_a_1, col_a_2, col_a_3 = st.columns([0.1, 99.8, 0.1])
         col_a_2.image('images/bg_image_4.png')
+
     with col_b:
-        st.markdown("<h1 style='text-align: left;'>НВО Навигатор</h1>", unsafe_allow_html=True)
-        st.markdown("<h3 style='text-align: left;'>(Национално Външно Оценяване)<br><br></h3>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center;'>НВО Навигатор</h1>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center;'>(Национално Външно Оценяване)<br><br></h3>", unsafe_allow_html=True)
 
 # Intro definition
 with intro:
-    st.markdown("<p style='text-align: center;'>Здравей, aз съм Диана.<br>Преминавайки изпитанието на матурите(НВО) след "
-                "7ми клас с моя син, събрахме всички важни данни публикувани от МОН по темата за гр. София. За мен беше "
-                "много полезно да видя цялата информация систематизирана и визуалиирана на едно място, за да вземем в "
-                "процеса на кандидастване възможно най-информирано и базирано на данни решение. <br>"
-                "Радваме се да споделим тези данни и се надявам те да помогнат и на други. Тук ще намерите НВО резултатите"
-                " - 2023 година, средния успех и броя на учениците, успеваемост, най-предпочитани "
-                "и паралелки с минимален или никакъв интерес, свободни места за различните класирания, трендове и повече. "
-                "Пишете ми в коментарите ако искате да добавим още информация или имате въпроси.<br>"
-                "УСПЕХ НА ВСИЧКИ 😊</p>", unsafe_allow_html=True)
+    st.markdown(
+        "<p style='text-align: center;'>Здравей, aз съм Диана.<br>Преминавайки изпитанието на матурите(НВО) след "
+        "7ми клас с моя син, събрахме всички важни данни по темата за гр.София, публикувани от МОН. За мен беше "
+        "много полезно да видя цялата информация систематизирана и визуалиирана на едно място, за да вземем в "
+        "процеса на кандидастване възможно най-информирано и базирано на данни решение. <br>"
+        "Радваме се да споделим тези данни и се надявам те да помогнат и на други. Тук ще намерите НВО резултатите"
+        " - 2023 година, средния успех и броя на учениците, успеваемост, най-предпочитани "
+        "и паралелки с минимален или никакъв интерес, свободни места за различните класирания, трендове и повече. "
+        "Пишете ми в коментарите ако имате въпроси.<br>"
+        "УСПЕХ НА ВСИЧКИ 😊</p>", unsafe_allow_html=True)
 
 
 # Create visualization_1 (fig1 and fig2)
@@ -287,19 +288,38 @@ with visio_2:
 
 
 # Message functionality and history features
-def load_msg_history():
-    try:
-        msg_history = pd.read_csv("msg_history.csv")
-    except FileNotFoundError:
-        msg_history = pd.DataFrame(columns=["name", "text", "time"])
-    return msg_history
+with comments:
+    st.markdown("<h3 style='text-align: center;'>Коментари</h3>", unsafe_allow_html=True)
+
+    # Connect with Mongo DB
+    @st.cache_resource
+    def db_connection():
+        return MongoClient(st.secrets['db_connect'])
 
 
-def save_msg_history(msg_history):
-    msg_history.to_csv("msg_history.csv", index=False)
+    client = db_connection()
 
 
-msg_history = load_msg_history()
+    @st.cache_data(ttl=300)
+    def get_message_history():
+        db = client.HBO_prod
+        records = db.messages.find()
+        records = list(records)
+        return records
+
+
+    def create_message(msg):
+        db = client.HBO_prod
+        records = db.messages
+        new_record = records.insert_one(msg)
+        return new_record
+
+
+    msg_history = get_message_history()
+    df_messages = pd.DataFrame(list(msg_history))
+    for _, message in df_messages.iterrows():
+        comments.info(f"{message['name']} ({message['time']})\n"
+                      f"{message['text']}")
 
 # Create message form feature
 with st.form(key='form1', clear_on_submit=True):
@@ -309,17 +329,18 @@ with st.form(key='form1', clear_on_submit=True):
     if submit_button:
         if user_name and user_message:
             timestamp = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-            message = {
+            new_message = {
                 "name": user_name,
                 "text": user_message,
                 "time": timestamp
             }
-            msg_history = pd.concat([msg_history, pd.DataFrame([message])])
-            save_msg_history(msg_history)
+            create_message(msg=new_message)
+            comments.info(f"{new_message['name']} ({new_message['time']})\n"
+                          f"{new_message['text']}")
 
-# Create comments section
-with comments:
-    st.markdown("<h3 style='text-align: center;'>Коментари</h3>", unsafe_allow_html=True)
+# # Create comments section
+# with comments:
+#     st.markdown("<h3 style='text-align: center;'>Коментари</h3>", unsafe_allow_html=True)
     # message_html = ""
     # for _, message in msg_history.iterrows():
     #     message_html += f"""
@@ -338,9 +359,6 @@ with comments:
     # """
     # html(html_snippet, height=400, scrolling=True)
 
-    for _, message in msg_history.iterrows():
-        comments.info(f"{message['name']} ({message['time']})\n"
-                      f"{message['text']}")
 
     # scroller = """
     #     <div>
