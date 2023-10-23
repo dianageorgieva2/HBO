@@ -5,12 +5,11 @@ import plotly.io as pio
 from data_statistika import stats_2020_clean, stats_2021_clean, stats_2022_clean, stats_2023_clean, \
     df_statistika_combined
 from data_klasirane_2023 import klasirane_2023_combined
-from data_klasirane_2022 import klasirane_2022_combined, yticks_text2_2022, yticks_text2_2022_mobile
 from datetime import datetime
 from plot_functions import fig3_visualization, fig3_visualization_mobile
+from msg_history import get_message_history, create_message
 from streamlit.components.v1 import html, components
 import base64
-from pymongo import MongoClient
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
@@ -290,30 +289,6 @@ with visio_2:
 # Message functionality and history features
 with comments:
     st.markdown("<h3 style='text-align: center;'>Коментари</h3>", unsafe_allow_html=True)
-
-    # Connect with Mongo DB
-    @st.cache_resource
-    def db_connection():
-        return MongoClient(st.secrets['db_connect'])
-
-
-    client = db_connection()
-
-
-    @st.cache_data(ttl=300)
-    def get_message_history():
-        db = client.HBO_prod
-        records = db.messages.find()
-        records = list(records)
-        return records
-
-
-    def create_message(msg):
-        db = client.HBO_prod
-        records = db.messages
-        new_record = records.insert_one(msg)
-        return new_record
-
 
     msg_history = get_message_history()
     df_messages = pd.DataFrame(list(msg_history))
