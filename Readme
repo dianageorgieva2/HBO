@@ -7,4 +7,3 @@ It is built mainly with python, pandas, plotly, css, html and it is satisfaying 
 All the data is directly taken from the ministry site and link is provided for a reference to the site.
 No additional data is used as an input.
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://hbodashboard2023.streamlit.app/)
