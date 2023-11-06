@@ -62,6 +62,7 @@ def fig3_visualization(klasirane_combined, x_column, x2_column):
                                    textfont=dict(size=9),
                                     marker=dict(color=cols[color_position], size=8, symbol="square"),
                                     orientation='h',
+                                    hoverinfo="none",  # Disable hover interactions
                                     showlegend=False,)
             fig3.add_trace(mesta, row=1, col=1)
             color_position +=1
@@ -171,6 +172,7 @@ def fig3_visualization(klasirane_combined, x_column, x2_column):
                                textfont=dict(size=9),
                                marker=dict(color=cols[color_position], size=8, symbol="square"),
                                orientation='h',
+                               hoverinfo="none",  # Disable hover interactions
                                showlegend=False, )
             fig3.add_trace(mesta, row=1, col=1)
             color_position += 1
@@ -288,6 +290,7 @@ def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
                                textfont=dict(size=9),
                                marker=dict(color=cols[color_position], size=8, symbol="square"),
                                orientation='h',
+                               hoverinfo="none",  # Disable hover interactions
                                showlegend=False, )
             fig3.add_trace(mesta, row=1, col=1)
             color_position += 1
@@ -397,6 +400,7 @@ def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
                                textfont=dict(size=9),
                                marker=dict(color=cols[color_position], size=8, symbol="square"),
                                orientation='h',
+                               hoverinfo="none",  # Disable hover interactions
                                showlegend=False, )
             fig3.add_trace(mesta, row=1, col=1)
             color_position += 1
