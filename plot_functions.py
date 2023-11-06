@@ -16,7 +16,7 @@ def fig3_visualization(klasirane_combined, x_column, x2_column):
     df_multiselect = klasirane_combined[klasirane_combined["Училище"].isin(multiselect)]
 
     if df_multiselect.empty:
-        fig3 = sp.make_subplots(rows=1, cols=2, shared_xaxes=True, column_widths=[0.20, 0.80])
+        fig3 = sp.make_subplots(rows=1, cols=2, shared_xaxes=True, column_widths=[0.20, 0.75])
         code_to_uchilishte_map = dict(klasirane_combined[['Код паралелка', 'Училище']].drop_duplicates().values)
         code_to_paral_map = dict(zip(klasirane_combined['Код паралелка'], klasirane_combined['Паралелка']))
 
@@ -86,7 +86,7 @@ def fig3_visualization(klasirane_combined, x_column, x2_column):
                            showticklabels=False,
                            showgrid=False,
                            showline=False,
-                           domain=[0.20, 1],
+                           domain=[0.20, 0.95],
                            tickvals=[],
                            ),
                 xaxis=dict(side="top",
@@ -128,7 +128,7 @@ def fig3_visualization(klasirane_combined, x_column, x2_column):
         components.html(buffer.getvalue(), width=None, height=600, scrolling=True)
 
     else:
-        fig3 = sp.make_subplots(rows=1, cols=2, shared_xaxes=True, column_widths=[0.20, 0.80])
+        fig3 = sp.make_subplots(rows=1, cols=2, shared_xaxes=True, column_widths=[0.20, 0.75])
         code_to_uchilishte_map = dict(df_multiselect[['Код паралелка', 'Училище']].drop_duplicates().values)
         code_to_paral_map = dict(zip(df_multiselect['Код паралелка'], df_multiselect['Паралелка']))
 
@@ -196,7 +196,7 @@ def fig3_visualization(klasirane_combined, x_column, x2_column):
                             showticklabels=False,
                             showgrid=False,
                             showline=False,
-                            domain=[0.20, 1],
+                            domain=[0.20, 0.95],
                             tickvals=[],
                             ),
                 xaxis=dict(side="top",
@@ -246,7 +246,7 @@ def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
     df_multiselect = klasirane_combined[klasirane_combined["Училище"].isin(multiselect)]
 
     if df_multiselect.empty:
-        fig3 = sp.make_subplots(rows=1, cols=2, shared_xaxes=True, column_widths=[0.20, 0.80])
+        fig3 = sp.make_subplots(rows=1, cols=2, shared_xaxes=True, column_widths=[0.20, 0.75])
         code_to_uchilishte_map = dict(klasirane_combined[['Код паралелка', 'Училище']].drop_duplicates().values)
         code_to_paral_map = dict(zip(klasirane_combined['Код паралелка'], klasirane_combined['Паралелка']))
 
@@ -314,7 +314,7 @@ def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
                             showticklabels=False,
                             showgrid=False,
                             showline=False,
-                            domain=[0.20, 1],
+                            domain=[0.20, 0.95],
                             tickvals=[],
                             ),
                 xaxis=dict(side="top",
@@ -356,7 +356,7 @@ def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
         components.html(buffer.getvalue(), width=None, height=600, scrolling=True)
 
     else:
-        fig3 = sp.make_subplots(rows=1, cols=2, shared_xaxes=True, column_widths=[0.20, 0.80])
+        fig3 = sp.make_subplots(rows=1, cols=2, shared_xaxes=True, column_widths=[0.20, 0.75])
         code_to_uchilishte_map = dict(df_multiselect[['Код паралелка', 'Училище']].drop_duplicates().values)
         code_to_paral_map = dict(zip(df_multiselect['Код паралелка'], df_multiselect['Паралелка']))
 
@@ -424,7 +424,7 @@ def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
                             showticklabels=False,
                             showgrid=False,
                             showline=False,
-                            domain=[0.20, 1],
+                            domain=[0.20, 0.95],
                             tickvals=[],
                             ),
                 xaxis=dict(side="top",
