@@ -40,7 +40,7 @@ def fig3_visualization(klasirane_combined, x_column, x2_column):
                                    textfont=dict(size=12),
                                    hoverlabel=dict(namelength=-1),
                                    hovertext=hover_text,
-                                   hovertemplate='%{hovertext}<br>Мин. бал: %{x}',
+                                   hovertemplate='%{hovertext}<br>Мин. бал: %{x}, <extra></extra>',
                                    orientation="h")
 
             fig3.add_trace(bars, row=1, col=2)
@@ -150,7 +150,7 @@ def fig3_visualization(klasirane_combined, x_column, x2_column):
                           textfont=dict(size=12),
                           hoverlabel=dict(namelength=-1),
                           hovertext=hover_text,
-                          hovertemplate='%{hovertext}<br>Мин. бал: %{x}',
+                          hovertemplate='%{hovertext}<br>Мин. бал: %{x}, <extra></extra>',
                           orientation="h")
 
             fig3.add_trace(bars, row=1, col=2)
@@ -255,7 +255,7 @@ def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
             # hover_text = [f"{code} {code_to_paral_map[code]}<br>{code_to_uchilishte_map[code]}"
             #     for code in df_k['Код паралелка'].unique()]
             hover_text = [
-                f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=40))}<br>{'<br>'.join(textwrap.wrap(code_to_uchilishte_map[code], width=40))}"
+                f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=45))}<br>{'<br>'.join(textwrap.wrap(code_to_uchilishte_map[code], width=45))}"
                 for code in df_k['Код паралелка'].unique()]
 
             bars = go.Bar(x=df_k[x_column],
@@ -268,7 +268,7 @@ def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
                           textfont=dict(size=12),
                           hoverlabel=dict(namelength=-1),
                           hovertext=hover_text,
-                          hovertemplate='%{hovertext}<br>Мин. бал: %{x}',
+                          hovertemplate='%{hovertext}<br>Мин. бал: %{x}, <extra></extra>',
                           orientation="h")
 
             fig3.add_trace(bars, row=1, col=2)
@@ -365,7 +365,7 @@ def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
             # hover_text = [f"{code} {code_to_paral_map[code]}<br>{code_to_uchilishte_map[code]}"
             #     for code in df_k['Код паралелка'].unique()]
             hover_text = [
-                f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=40))}<br>{'<br>'.join(textwrap.wrap(code_to_uchilishte_map[code], width=40))}"
+                f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=45))}<br>{'<br>'.join(textwrap.wrap(code_to_uchilishte_map[code], width=45))}"
                 for code in df_k['Код паралелка'].unique()]
 
             bars = go.Bar(x=df_k[x_column],
@@ -378,7 +378,7 @@ def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
                           textfont=dict(size=12),
                           hoverlabel=dict(namelength=-1),
                           hovertext=hover_text,
-                          hovertemplate='%{hovertext}<br>Мин. бал: %{x}',
+                          hovertemplate='%{hovertext}<br>Мин. бал: %{x}, <extra></extra>',
                           orientation="h")
 
             fig3.add_trace(bars, row=1, col=2)
