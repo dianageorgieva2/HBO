@@ -24,24 +24,22 @@ def fig3_visualization(klasirane_combined, x_column, x2_column):
             df_k = klasirane_combined[klasirane_combined['Класиране'] == k]
             # hover_text = [f"{code} {code_to_paral_map[code]}<br>{code_to_uchilishte_map[code]}"
             #     for code in df_k['Код паралелка'].unique()]
-            hover_text = [f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=45))}<br>{'<br>'.join(textwrap.wrap(code_to_uchilishte_map[code], width=45))}"
-                for code in df_k['Код паралелка'].unique()]
-            yticks_text2_2023 = [
-                f"{code}-{'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=25))}"
-                for code in klasirane_combined['Код паралелка'].unique()]
+            hover_text = [f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=45))}<br>"
+                          f"{'<br>'.join(textwrap.wrap(code_to_uchilishte_map[code], width=45))}"
+                          for code in df_k['Код паралелка'].unique()]
 
             bars = go.Bar(x=df_k[x_column],
-                                   y=df_k['Код паралелка'],
-                                   name=f'{k} класиране',
-                                   offsetgroup=f'{k} класиране',
-                                   text=df_k[x_column],
-                                   textposition="outside",
-                                   cliponaxis=False,
-                                   textfont=dict(size=12),
-                                   hoverlabel=dict(namelength=-1),
-                                   hovertext=hover_text,
-                                   hovertemplate='%{hovertext}<br>Мин. бал: %{x}, <extra></extra>',
-                                   orientation="h")
+                          y=df_k['Код паралелка'],
+                          name=f'{k} класиране',
+                          offsetgroup=f'{k} класиране',
+                          text=df_k[x_column],
+                          textposition="outside",
+                          cliponaxis=False,
+                          textfont=dict(size=12),
+                          hoverlabel=dict(namelength=-1),
+                          hovertext=hover_text,
+                          hovertemplate='%{hovertext}<br>Мин. бал: %{x}, <extra></extra>',
+                          orientation="h",)
 
             fig3.add_trace(bars, row=1, col=2)
 
@@ -53,19 +51,19 @@ def fig3_visualization(klasirane_combined, x_column, x2_column):
                 f"{code}-{'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=25))}"
                 for code in klasirane_combined['Код паралелка'].unique()]
             mesta = go.Scatter(x=np.full(len(df_k), 'Свободни<br>места'),
-                                   y=df_k['Код паралелка'],
-                                    name=f'{k} класиране',
-                                    offsetgroup=f'{k} класиране',
-                                   text=df_k[x2_column],
-                                   textposition="middle right",
-                                    mode='text+markers',
-                                   textfont=dict(size=9),
-                                    marker=dict(color=cols[color_position], size=8, symbol="square"),
-                                    orientation='h',
-                                    hoverinfo="none",  # Disable hover interactions
-                                    showlegend=False,)
+                               y=df_k['Код паралелка'],
+                               name=f'{k} класиране',
+                               offsetgroup=f'{k} класиране',
+                               text=df_k[x2_column],
+                               textposition="middle right",
+                               mode='text+markers',
+                               textfont=dict(size=9),
+                               marker=dict(color=cols[color_position], size=8, symbol="square"),
+                               orientation='h',
+                               hoverinfo="none",  # Disable hover interactions
+                               showlegend=False,)
             fig3.add_trace(mesta, row=1, col=1)
-            color_position +=1
+            color_position += 1
 
             fig3.update_layout(
                 scattermode='group',
@@ -74,29 +72,27 @@ def fig3_visualization(klasirane_combined, x_column, x2_column):
                 paper_bgcolor="rgba(0,0,0,0)",
                 plot_bgcolor="rgba(0,0,0,0)",
                 dragmode=False,
-                margin=dict(l=5, r=5),
+                margin=dict(l=5, r=5, t=5, b=5),
                 legend=dict(orientation="v",
                             yanchor="bottom",
                             y=1.0001,
                             xanchor='right',
                             x=1),
                 xaxis2=dict(title='Минимален бал',
+                            titlefont_size=12,
+                            showticklabels=False,
+                            showgrid=False,
+                            showline=False,
+                            domain=[0.20, 0.95],
+                            ),
+                xaxis=dict(title='Св. места',
                            titlefont_size=12,
-                           side="top",
                            showticklabels=False,
                            showgrid=False,
                            showline=False,
-                           domain=[0.20, 0.95],
-                           tickvals=[],
+                           type='category',
+                           domain=[0, 0.20],
                            ),
-                xaxis=dict(side="top",
-                           showticklabels=True,
-                           showgrid=False,
-                            showline=False,
-                            type='category',
-                            domain=[0, 0.20],
-                            tickangle=-90,
-                            ),
                 yaxis=dict(showticklabels=True,
                            type='category',
                            showgrid=False,
@@ -137,7 +133,8 @@ def fig3_visualization(klasirane_combined, x_column, x2_column):
             # hover_text = [f"{code} {code_to_paral_map[code]}<br>{code_to_uchilishte_map[code]}"
             #     for code in df_k['Код паралелка'].unique()]
             hover_text = [
-                f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=45))}<br>{'<br>'.join(textwrap.wrap(code_to_uchilishte_map[code], width=45))}"
+                f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=45))}<br>"
+                f"{'<br>'.join(textwrap.wrap(code_to_uchilishte_map[code], width=45))}"
                 for code in df_k['Код паралелка'].unique()]
 
             bars = go.Bar(x=df_k[x_column],
@@ -192,20 +189,19 @@ def fig3_visualization(klasirane_combined, x_column, x2_column):
                             x=1),
                 xaxis2=dict(title='Минимален бал',
                             titlefont_size=12,
-                            side="top",
                             showticklabels=False,
                             showgrid=False,
                             showline=False,
                             domain=[0.20, 0.95],
                             tickvals=[],
                             ),
-                xaxis=dict(side="top",
-                           showticklabels=True,
+                xaxis=dict(title='Св. места',
+                           titlefont_size=12,
+                           showticklabels=False,
                            showgrid=False,
                            showline=False,
                            type='category',
                            domain=[0, 0.20],
-                           tickangle=-90,
                            ),
                 yaxis=dict(showticklabels=True,
                            type='category',
@@ -255,7 +251,8 @@ def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
             # hover_text = [f"{code} {code_to_paral_map[code]}<br>{code_to_uchilishte_map[code]}"
             #     for code in df_k['Код паралелка'].unique()]
             hover_text = [
-                f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=45))}<br>{'<br>'.join(textwrap.wrap(code_to_uchilishte_map[code], width=45))}"
+                f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=45))}<br>"
+                f"{'<br>'.join(textwrap.wrap(code_to_uchilishte_map[code], width=45))}"
                 for code in df_k['Код паралелка'].unique()]
 
             bars = go.Bar(x=df_k[x_column],
@@ -310,20 +307,19 @@ def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
                             x=1),
                 xaxis2=dict(title='Минимален бал',
                             titlefont_size=12,
-                            side="top",
                             showticklabels=False,
                             showgrid=False,
                             showline=False,
                             domain=[0.20, 0.95],
                             tickvals=[],
                             ),
-                xaxis=dict(side="top",
-                           showticklabels=True,
+                xaxis=dict(title='Св. места',
+                           titlefont_size=12,
+                           showticklabels=False,
                            showgrid=False,
                            showline=False,
                            type='category',
                            domain=[0, 0.20],
-                           tickangle=-90,
                            ),
                 yaxis=dict(showticklabels=True,
                            type='category',
@@ -365,7 +361,8 @@ def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
             # hover_text = [f"{code} {code_to_paral_map[code]}<br>{code_to_uchilishte_map[code]}"
             #     for code in df_k['Код паралелка'].unique()]
             hover_text = [
-                f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=45))}<br>{'<br>'.join(textwrap.wrap(code_to_uchilishte_map[code], width=45))}"
+                f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=45))}<br>"
+                f"{'<br>'.join(textwrap.wrap(code_to_uchilishte_map[code], width=45))}"
                 for code in df_k['Код паралелка'].unique()]
 
             bars = go.Bar(x=df_k[x_column],
@@ -420,20 +417,19 @@ def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
                             x=1),
                 xaxis2=dict(title='Минимален бал',
                             titlefont_size=12,
-                            side="top",
                             showticklabels=False,
                             showgrid=False,
                             showline=False,
                             domain=[0.20, 0.95],
                             tickvals=[],
                             ),
-                xaxis=dict(side="top",
-                           showticklabels=True,
+                xaxis=dict(showticklabels=True,
                            showgrid=False,
                            showline=False,
                            type='category',
                            domain=[0, 0.20],
                            tickangle=-90,
+                           side='top'
                            ),
                 yaxis=dict(showticklabels=True,
                            type='category',
