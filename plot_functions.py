@@ -22,9 +22,9 @@ def fig3_visualization(klasirane_combined, x_column, x2_column):
 
         for k in klasirane_combined['Класиране'].unique():
             df_k = klasirane_combined[klasirane_combined['Класиране'] == k]
-            # hover_text = [f"{code} {code_to_paral_map[code]}<br>{code_to_uchilishte_map[code]}"
+            # hover_text_fig3 = [f"{code} {code_to_paral_map[code]}<br>{code_to_uchilishte_map[code]}"
             #     for code in df_k['Код паралелка'].unique()]
-            hover_text = [f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=45))}<br>"
+            hover_text_fig3 = [f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=45))}<br>"
                           f"{'<br>'.join(textwrap.wrap(code_to_uchilishte_map[code], width=45))}"
                           for code in df_k['Код паралелка'].unique()]
 
@@ -37,7 +37,7 @@ def fig3_visualization(klasirane_combined, x_column, x2_column):
                           cliponaxis=False,
                           textfont=dict(size=12),
                           hoverlabel=dict(namelength=-1),
-                          hovertext=hover_text,
+                          hovertext=hover_text_fig3,
                           hovertemplate='%{hovertext}<br>Мин. бал: %{x}, <extra></extra>',
                           orientation="h",)
 
@@ -134,9 +134,9 @@ def fig3_visualization(klasirane_combined, x_column, x2_column):
 
         for k in df_multiselect['Класиране'].unique():
             df_k = df_multiselect[df_multiselect['Класиране'] == k]
-            # hover_text = [f"{code} {code_to_paral_map[code]}<br>{code_to_uchilishte_map[code]}"
+            # hover_text_fig3 = [f"{code} {code_to_paral_map[code]}<br>{code_to_uchilishte_map[code]}"
             #     for code in df_k['Код паралелка'].unique()]
-            hover_text = [
+            hover_text_fig3 = [
                 f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=45))}<br>"
                 f"{'<br>'.join(textwrap.wrap(code_to_uchilishte_map[code], width=45))}"
                 for code in df_k['Код паралелка'].unique()]
@@ -150,7 +150,7 @@ def fig3_visualization(klasirane_combined, x_column, x2_column):
                           cliponaxis=False,
                           textfont=dict(size=12),
                           hoverlabel=dict(namelength=-1),
-                          hovertext=hover_text,
+                          hovertext=hover_text_fig3,
                           hovertemplate='%{hovertext}<br>Мин. бал: %{x}, <extra></extra>',
                           orientation="h")
 
@@ -255,9 +255,9 @@ def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
 
         for k in klasirane_combined['Класиране'].unique():
             df_k = klasirane_combined[klasirane_combined['Класиране'] == k]
-            # hover_text = [f"{code} {code_to_paral_map[code]}<br>{code_to_uchilishte_map[code]}"
+            # hover_text_fig3 = [f"{code} {code_to_paral_map[code]}<br>{code_to_uchilishte_map[code]}"
             #     for code in df_k['Код паралелка'].unique()]
-            hover_text = [
+            hover_text_fig3 = [
                 f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=45))}<br>"
                 f"{'<br>'.join(textwrap.wrap(code_to_uchilishte_map[code], width=45))}"
                 for code in df_k['Код паралелка'].unique()]
@@ -271,7 +271,7 @@ def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
                           cliponaxis=False,
                           textfont=dict(size=12),
                           hoverlabel=dict(namelength=-1),
-                          hovertext=hover_text,
+                          hovertext=hover_text_fig3,
                           hovertemplate='%{hovertext}<br>Мин. бал: %{x}, <extra></extra>',
                           orientation="h")
 
@@ -368,9 +368,9 @@ def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
 
         for k in df_multiselect['Класиране'].unique():
             df_k = df_multiselect[df_multiselect['Класиране'] == k]
-            # hover_text = [f"{code} {code_to_paral_map[code]}<br>{code_to_uchilishte_map[code]}"
+            # hover_text_fig3 = [f"{code} {code_to_paral_map[code]}<br>{code_to_uchilishte_map[code]}"
             #     for code in df_k['Код паралелка'].unique()]
-            hover_text = [
+            hover_text_fig3 = [
                 f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=45))}<br>"
                 f"{'<br>'.join(textwrap.wrap(code_to_uchilishte_map[code], width=45))}"
                 for code in df_k['Код паралелка'].unique()]
@@ -384,7 +384,7 @@ def fig3_visualization_mobile(klasirane_combined, x_column, x2_column):
                           cliponaxis=False,
                           textfont=dict(size=12),
                           hoverlabel=dict(namelength=-1),
-                          hovertext=hover_text,
+                          hovertext=hover_text_fig3,
                           hovertemplate='%{hovertext}<br>Мин. бал: %{x}, <extra></extra>',
                           orientation="h")
 
