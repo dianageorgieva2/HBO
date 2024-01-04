@@ -6,8 +6,11 @@ from data_statistika import stats_2020_clean, stats_2021_clean, stats_2022_clean
     df_statistika_combined
 from data_klasirane_2023 import klasirane_2023_combined
 from data_klasirane_2022 import klasirane_2022_combined
+from data_klasirane_2021 import klasirane_2021_combined
+from data_klasirane_2020 import klasirane_2020_combined
+# Import the data for the new year
 from datetime import datetime
-from plot_functions import fig3_visualization, fig3_visualization_mobile
+from plot_functions import fig3_visualization
 from msg_history import get_message_history, create_message
 from streamlit.components.v1 import html, components
 import base64
@@ -16,7 +19,6 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 pd.set_option('display.width', 1000)
 pd.options.display.float_format = '{:,.2f}'.format
-
 
 # Dashboard layout
 pio.templates.default = "simple_white"
@@ -68,6 +70,7 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 #
 #
 # set_background('images/bg_image_4.png')
+klasirane_2023_combined.info()
 
 header = st.container()
 intro = st.container()
@@ -102,6 +105,10 @@ with st.sidebar:
         "<p style='text-align: left; font-size: 10px;'>(*Свободните места за младежи и девойки са показани като сбор "
         "на местата с квотa и местата на общо основание.)</p>", unsafe_allow_html=True)
     st.divider()
+
+    mobile_toggle = st.toggle('Адаптирана версия за смарт телефон')
+    st.divider()
+
     st.write("Използван сайт на МОН: [ЛИНК](https://ruo-sofia-grad.com/%D0%B8%D0%B7%D0%BF%D0%B8%D1%82%D0%B8-%D0%B8-"
              "%D0%BF%D1%80%D0%B8%D0%B5%D0%BC-%D0%BD%D0%B0-%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D1%86%D0%B8/%D0%BF%D1%80%"
              "D0%B8%D0%B5%D0%BC-%D0%BD%D0%B0-%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D1%86%D0%B8/%D0%BF%D1%80%D0%B8%D0%B5%D0%BC-"
@@ -257,42 +264,49 @@ with visio_1:
 
 
 # Create visualization_2 (fig3)
-visio_2.markdown("<h3 style='text-align: center;'>Детайли - класиране</h3>", unsafe_allow_html=True)
+visio_2.markdown("<h3 style='text-align: center;'>Класиране - детайли</h3>", unsafe_allow_html=True)
 
 with visio_2:
+    def button_function_mobile(year_label, klasirane_combined_df):
+        fig3_visualization(klasirane_combined=klasirane_combined_df,
+                           x_column=x_column,
+                           x2_column=x2_column,
+                           mobile=True,
+                           year=year_label)
 
-    # # Option for showing 2022 year results with radio buttons
-    # selected_option = visio_2.radio("", ('2023', '2022'), key="fig3_radio_years", horizontal=True)
-    # if selected_option == '2023':
-    #     fig3_visualization(klasirane_combined=klasirane_2023_combined, x_column=x_column, x2_column=x2_column)
-    # elif selected_option == '2022':
-    #     fig3_visualization(klasirane_combined=klasirane_2022_combined, x_column=x_column, x2_column=x2_column)
+    def button_function(year_label, klasirane_combined_df):
+        fig3_visualization(klasirane_combined=klasirane_combined_df,
+                           x_column=x_column,
+                           x2_column=x2_column,
+                           mobile=False,
+                           year=year_label)
 
-    mobile_toggle = visio_2.toggle('Адаптирана графика за телефон')
+    radio_button = visio_2.radio(label=' ', options=['2023', '2022', '2021', '2020'], horizontal=True)
+    # Add the new year to the radio button options and extended the functionality below when selected
 
-    tab1, tab2 = visio_2.tabs(["2023", "2022"])
-    with tab1:
+    if radio_button == '2023':
         if mobile_toggle:
-            fig3_visualization_mobile(klasirane_combined=klasirane_2023_combined,
-                                      x_column=x_column,
-                                      x2_column=x2_column)
+            button_function_mobile(year_label=2023, klasirane_combined_df=klasirane_2023_combined)
         else:
-            fig3_visualization(klasirane_combined=klasirane_2023_combined,
-                               x_column=x_column,
-                               x2_column=x2_column)
-    with tab2:
-        tab2.markdown("<h1 style='text-align: center;'>🛠️</h1><br><p style='text-align: center;'>(не е готово)</p>",
-                      unsafe_allow_html=True)
-        # Tab options is not working properly, as it doesn't update well and needs to rerun in order to show
-        # if mobile_toggle:
-        #     fig3_visualization_mobile(klasirane_combined=klasirane_2022_combined,
-        #                               x_column=x_column,
-        #                               x2_column=x2_column)
-        # else:
-        #     fig3_visualization(klasirane_combined=klasirane_2022_combined,
-        #                        x_column=x_column,
-        #                        x2_column=x2_column)
+            button_function(year_label=2023, klasirane_combined_df=klasirane_2023_combined)
 
+    if radio_button == '2022':
+        if mobile_toggle:
+            button_function_mobile(year_label=2022, klasirane_combined_df=klasirane_2022_combined)
+        else:
+            button_function(year_label=2022, klasirane_combined_df=klasirane_2022_combined)
+
+    if radio_button == '2021':
+        if mobile_toggle:
+            button_function_mobile(year_label=2021, klasirane_combined_df=klasirane_2021_combined)
+        else:
+            button_function(year_label=2021, klasirane_combined_df=klasirane_2021_combined)
+
+    if radio_button == '2020':
+        if mobile_toggle:
+            button_function_mobile(year_label=2020, klasirane_combined_df=klasirane_2020_combined)
+        else:
+            button_function(year_label=2020, klasirane_combined_df=klasirane_2020_combined)
 
 # Message functionality and history features
 with comments:
