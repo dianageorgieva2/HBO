@@ -70,7 +70,6 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 #
 #
 # set_background('images/bg_image_4.png')
-klasirane_2023_combined.info()
 
 header = st.container()
 intro = st.container()
