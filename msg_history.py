@@ -12,14 +12,14 @@ client = db_connection()
 
 @st.cache_data(ttl=300)
 def get_message_history():
-    db = client.HBO_test
+    db = client.HBO_prod
     records = db.messages.find()
     records = list(records)
     return records
 
 
 def create_message(msg):
-    db = client.HBO_test
+    db = client.HBO_prod
     records = db.messages
     new_record = records.insert_one(msg)
     return new_record
