@@ -13,7 +13,9 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
     # Define filter function for 2023
     def filter_2023():
         df = klasirane_combined
-        filters = ['Училище', 'Код паралелка', 'Паралелка', 'Профил_1', 'Профил_2']
+        filters = ['Училище_формат', 'Код паралелка', 'Паралелка_формат', 'Профил_1', 'Профил_2']
+        placeholder_names = ['Училище', 'Код паралелка', 'Паралелка', 'Профил_1', 'Профил_2']
+
         filters = {filter_name: [] for filter_name in filters}
 
         if 'filters' not in st.session_state:
@@ -45,7 +47,7 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
                 with col_list[counter - 1]:
                     selected = st.multiselect(" ", options,
                                               default=st.session_state.filters[filter_name],
-                                              placeholder=f"{filter_name}")
+                                              placeholder=f"{placeholder_names[counter - 1]}")
 
                 # increase counter and reset to 1 if max_value is reached
                 counter += 1
@@ -66,7 +68,8 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
     # Define filter function for 2022
     def filter_2022():
         df2 = klasirane_combined
-        filters2 = ['Училище', 'Код паралелка', 'Паралелка', 'Профил_1', 'Профил_2']
+        filters2 = ['Училище_формат', 'Код паралелка', 'Паралелка_формат', 'Профил_1', 'Профил_2']
+        placeholder_names2 = ['Училище', 'Код паралелка', 'Паралелка', 'Профил_1', 'Профил_2']
         filters2 = {filter_name: [] for filter_name in filters2}
 
         if 'filters2' not in st.session_state:
@@ -98,7 +101,7 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
                 with col_list2[counter2 - 1]:
                     selected2 = st.multiselect(" ", options2,
                                                default=st.session_state.filters2[filter_name],
-                                               placeholder=f"{filter_name}")
+                                               placeholder=f"{placeholder_names2[counter2 - 1]}")
 
                 # increase counter and reset to 1 if max_value is reached
                 counter2 += 1
@@ -119,7 +122,8 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
     # Define filter function for 2021
     def filter_2021():
         df3 = klasirane_combined
-        filters3 = ['Училище', 'Код паралелка', 'Паралелка', 'Профил_1', 'Профил_2']
+        filters3 = ['Училище_формат', 'Код паралелка', 'Паралелка_формат', 'Профил_1', 'Профил_2']
+        placeholder_names3 = ['Училище', 'Код паралелка', 'Паралелка', 'Профил_1', 'Профил_2']
         filters3 = {filter_name: [] for filter_name in filters3}
 
         if 'filters3' not in st.session_state:
@@ -151,7 +155,7 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
                 with col_list3[counter3 - 1]:
                     selected3 = st.multiselect(" ", options3,
                                                default=st.session_state.filters3[filter_name],
-                                               placeholder=f"{filter_name}")
+                                               placeholder=f"{placeholder_names3[counter3 - 1]}")
 
                 # increase counter and reset to 1 if max_value is reached
                 counter3 += 1
@@ -172,7 +176,8 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
     # Define filter function for 2020
     def filter_2020():
         df0 = klasirane_combined
-        filters0 = ['Училище', 'Код паралелка', 'Паралелка', 'Профил_1', 'Профил_2']
+        filters0 = ['Училище_формат', 'Код паралелка', 'Паралелка_формат', 'Профил_1', 'Профил_2']
+        placeholder_names0 = ['Училище', 'Код паралелка', 'Паралелка', 'Профил_1', 'Профил_2']
         filters0 = {filter_name: [] for filter_name in filters0}
 
         if 'filters0' not in st.session_state:
@@ -204,7 +209,7 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
                 with col_list0[counter0 - 1]:
                     selected0 = st.multiselect(" ", options0,
                                                default=st.session_state.filters0[filter_name],
-                                               placeholder=f"{filter_name}")
+                                               placeholder=f"{placeholder_names0[counter0 - 1]}")
 
                 # increase counter and reset to 1 if max_value is reached
                 counter0 += 1
@@ -238,15 +243,17 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
     code_to_uchilishte_map = dict(df_multiselect[['Код паралелка', 'Училище_short']].drop_duplicates().values)
     code_to_uchilishte_map = dict(
         df_multiselect[['Код паралелка', 'Училище_short']].astype(str).drop_duplicates().values)
-
     code_to_paral_map = dict(zip(df_multiselect['Код паралелка'], df_multiselect['Паралелка']))
+    code_to_uchilishte_map_hover = dict(df_multiselect[['Код паралелка', 'Училище_формат']].drop_duplicates().values)
+    code_to_bal_map_hover = dict(df_multiselect[['Код паралелка', 'Балообразуване']].drop_duplicates().values)
 
     for k in df_multiselect['Класиране'].unique():
         df_k = df_multiselect[df_multiselect['Класиране'] == k]
         # hover_text_fig3 = [f"{code} {code_to_paral_map[code]}<br>{code_to_uchilishte_map[code]}"
         #     for code in df_k['Код паралелка'].unique()]
         hover_text_fig3 = [f"{code} {'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=45))}<br>"
-                           f"{'<br>'.join(textwrap.wrap(code_to_uchilishte_map[code], width=45))}"
+                           f"{'<br>'.join(textwrap.wrap(code_to_uchilishte_map_hover[code], width=45))}<br>" \
+                           f"{'<br>'.join(textwrap.wrap(code_to_bal_map_hover[code], width=45))}"
                            for code in df_k['Код паралелка'].unique()]
 
         bars = go.Bar(x=df_k[x_column],
@@ -274,7 +281,7 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
         df_k = df_multiselect[df_multiselect['Класиране'] == k]
         if not mobile:
            yticks_text = [f"{'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=30))} " 
-                          f"<br> <i style='color:blue;'>{code_to_uchilishte_map[code][:25]}</i>"
+                          f"<br> <i style='color:#808095;'>{code_to_uchilishte_map[code][:25]}</i>"
                           f"{'...' if len(code_to_uchilishte_map[code]) > 25 else ''}"
                           for code in df_multiselect['Код паралелка'].unique()]
 
@@ -358,3 +365,32 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
     fig3.write_html(buffer, full_html=True, include_plotlyjs=True, config=config)
     components.html(buffer.getvalue(), width=None, height=600, scrolling=True)
 
+    with st.expander("Сурови данни"):
+        st.dataframe(data=df_multiselect,
+                     column_order=('Код паралелка', 'Паралелка_формат', 'Училище_формат', 'Училище_short', 'Район', 'Вид на паралелката',
+                                   'Балообразуване', 'Форма на обучение', 'Брой паралелки', 'Година', 'Места_общ_брой',
+                                   'Места_общ_брой_м', 'Места_общ_брой_д', 'Класиране', 'Мин_бал_о', 'Мин_бал_м', 'Мин_бал_ж',
+                                   'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж', 'Профил_1', 'Профил_2', 'Профил_3'),
+                     column_config={
+                         'Код паралелка': 'Код паралелка',
+                         'Паралелка_формат': 'Паралелка',
+                         'Училище_формат': 'Училище',
+                         'Училище_short': 'Училище(съкр.)',
+                         'Район': 'Район',
+                         'Вид на паралелката': 'Вид на паралелката',
+                         'Балообразуване': 'Балообразуване',
+                         'Форма на обучение': 'Форма на обучение',
+                         'Брой паралелки': 'Брой паралелки',
+                         'Места_общ_брой': 'Места общ брой (o)',
+                         'Места_общ_брой_м': 'Места общ брой (м)',
+                         'Места_общ_брой_д': 'Места общ брой (д)',
+                         'Класиране': 'Класиране',
+                         'Мин_бал_о': 'Мин. бал (о)',
+                         'Мин_бал_м': 'Мин. бал (м)',
+                         'Мин_бал_ж': 'Мин. бал (д)',
+                         'Макс_бал_о': 'Макс. бал (о)',
+                         'Макс_бал_м': 'Макс. бал(м)',
+                         'Макс_бал_ж': 'Макс. бал(д)',
+                         'Профил_1': 'Профил 1',
+                         'Профил_2': 'Профил 2',
+                         'Профил_3': 'Профил 3'})
