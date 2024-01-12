@@ -266,6 +266,16 @@ with visio_1:
 visio_2.markdown("<h3 style='text-align: center;'>Класиране - детайли</h3>", unsafe_allow_html=True)
 
 with visio_2:
+    klasirane_all = [klasirane_2023_combined, klasirane_2022_combined, klasirane_2021_combined, klasirane_2020_combined]
+    for df in klasirane_all:
+        for uchilishte_code in df['Код училище']:
+            if uchilishte_code in klasirane_all[3]['Код училище'].values:
+                df.loc[df['Код училище'] == uchilishte_code, 'Училище_short'] = \
+                    klasirane_all[3].loc[klasirane_all[3]['Код училище'] == uchilishte_code, 'Училище_формат'].values[0]
+            else:
+                df.loc[df['Код училище'] == uchilishte_code, 'Училище_short'] = \
+                    df.loc[df['Код училище'] == uchilishte_code, 'Училище_формат'].values
+
     def button_function_mobile(year_label, klasirane_combined_df):
         fig3_visualization(klasirane_combined=klasirane_combined_df,
                            x_column=x_column,

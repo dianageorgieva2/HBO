@@ -435,6 +435,21 @@ klasirane_2021_combined['Профил_2'] = klasirane_2021_combined['Профи�
     replace('AE интензивно',
             'АЕ интензивно')
 
+klasirane_2021_combined['Училище_формат'] = klasirane_2021_combined['Училище']
+klasirane_2021_combined['Училище_формат'] = klasirane_2021_combined['Училище_формат'].str.split(',', n=1).str.get(0)
+
+klasirane_2021_combined['Училище_формат'] = klasirane_2021_combined['Училище_формат']. \
+    str.replace('\n',
+                ' ')
+
+klasirane_2021_combined['Училище_формат'] = klasirane_2021_combined['Училище_формат']. \
+    replace('Професионална гимназия по екология и биотехнологии "Проф. д-р Асен Златаров"',
+            'ПГЕБ "Проф. д-р Асен Златаров"')
+
+klasirane_2021_combined['Училище_формат'] = klasirane_2021_combined['Училище_формат']. \
+    replace('Професионална гимназия по туризъм "Алеко Константинов"',
+            'ПГ туризъм "Алеко Константинов"')
+
 # unique_values = klasirane_2021_combined['Профил_1x'].sort_values().unique()
 # for value in unique_values:
 #     print(value)
@@ -463,3 +478,4 @@ for df in dataframes:
 # Concatenate all the DataFrames vertically
 result = pd.concat(all_data_check, axis=1, ignore_index=True)
 # print(result)
+

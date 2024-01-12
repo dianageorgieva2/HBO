@@ -235,7 +235,10 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
         df_multiselect = filter_2020()
 
     fig3 = sp.make_subplots(rows=1, cols=2, shared_xaxes=True, column_widths=[0.23, 0.77])
-    code_to_uchilishte_map = dict(df_multiselect[['Код паралелка', 'Училище']].drop_duplicates().values)
+    code_to_uchilishte_map = dict(df_multiselect[['Код паралелка', 'Училище_short']].drop_duplicates().values)
+    code_to_uchilishte_map = dict(
+        df_multiselect[['Код паралелка', 'Училище_short']].astype(str).drop_duplicates().values)
+
     code_to_paral_map = dict(zip(df_multiselect['Код паралелка'], df_multiselect['Паралелка']))
 
     for k in df_multiselect['Класиране'].unique():
@@ -270,8 +273,11 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
     for k in df_multiselect['Класиране'].unique():
         df_k = df_multiselect[df_multiselect['Класиране'] == k]
         if not mobile:
-            yticks_text = [f"{code}-{'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=25))}"for code in
-                           df_multiselect['Код паралелка'].unique()]
+           yticks_text = [f"{'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=30))} " 
+                          f"<br> <i style='color:blue;'>{code_to_uchilishte_map[code][:25]}</i>"
+                          f"{'...' if len(code_to_uchilishte_map[code]) > 25 else ''}"
+                          for code in df_multiselect['Код паралелка'].unique()]
+
         else:
             yticks_text = [f"{code}" for code in df_multiselect['Код паралелка'].unique()]
         mesta = go.Scatter(x=np.full(len(df_k), 'Свободни<br>места'),
@@ -293,7 +299,7 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
         fig3.update_layout(
             scattermode='group',
             hoverlabel_align='left',
-            height=len(df_multiselect) * 12 + 180,
+            height=len(df_multiselect) * 13 + 180,
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(0,0,0,0)",
             dragmode=False,
@@ -351,3 +357,4 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
     buffer = io.StringIO()
     fig3.write_html(buffer, full_html=True, include_plotlyjs=True, config=config)
     components.html(buffer.getvalue(), width=None, height=600, scrolling=True)
+

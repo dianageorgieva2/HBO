@@ -181,13 +181,13 @@ klasirane_2022_3_clean.index = klasirane_2022_1_clean.index
 # print(f'Klasirane 3: {klasirane_2022_3_clean.shape}')
 
 # KLASIRANE 4
-mesta_2022_4_clean = mesta_2022_4.drop(mesta_2022_4.columns[[0, 3]], axis=1)
+mesta_2022_4_clean = mesta_2022_4.drop(mesta_2022_4.columns[[0, 1, 3]], axis=1)
 mesta_2022_4_clean = mesta_2022_4_clean.rename(columns={
-                            "Unnamed: 1": "Код училище",
                             "Unnamed: 2": "Код паралелка",
                             "Unnamed: 4": "Места_о",
                             "Unnamed: 5": "Места_м",
                             "Unnamed: 6": "Места_д"})
+
 mesta_2022_4_clean = mesta_2022_4_clean[mesta_2022_4_clean["Код паралелка"].notna()]
 mesta_2022_4_clean = mesta_2022_4_clean.drop([0], axis=0)
 mesta_2022_4_clean = mesta_2022_4_clean.fillna(0)
@@ -206,6 +206,12 @@ mesta_2022_4_clean[["Места_о", "Места_м", "Места_д", 'Мест
     apply(pd.to_numeric, errors='coerce').astype("Int64")
 mesta_2022_4_clean["Класиране"] = 4
 mesta_2022_4_clean["Класиране"] = mesta_2022_4_clean["Класиране"].astype(int)
+
+for paralelka_kod in klasirane_2022_1_clean["Код паралелка"]:
+    if paralelka_kod in mesta_2022_4_clean["Код паралелка"].values:
+        mesta_2022_4_clean.loc[mesta_2022_4_clean["Код паралелка"] == paralelka_kod, "Код училище"] = \
+            klasirane_2022_1_clean.loc[klasirane_2022_1_clean["Код паралелка"] == paralelka_kod, "Код училище"].values[0]
+
 mesta_2022_4_clean = mesta_2022_4_clean.sort_values(by='Код паралелка')
 mesta_2022_4_clean.reset_index(drop=True, inplace=True)
 mesta_2022_4_clean.index = klasirane_2022_1_clean.index
@@ -398,6 +404,21 @@ klasirane_2022_combined['Профил_3'] = klasirane_2022_combined['Профи�
 klasirane_2022_combined['Профил_2'] = klasirane_2022_combined['Профил_2'].\
     replace('AE интензивно',
             'АЕ интензивно')
+
+klasirane_2022_combined['Училище_формат'] = klasirane_2022_combined['Училище']
+klasirane_2022_combined['Училище_формат'] = klasirane_2022_combined['Училище_формат'].str.split(',', n=1).str.get(0)
+
+klasirane_2022_combined['Училище_формат'] = klasirane_2022_combined['Училище_формат']. \
+    str.replace('\n',
+                ' ')
+
+klasirane_2022_combined['Училище_формат'] = klasirane_2022_combined['Училище_формат']. \
+    replace('Професионална гимназия по екология и биотехнологии "Проф. д-р Асен Златаров"',
+            'ПГЕБ "Проф. д-р Асен Златаров"')
+
+klasirane_2022_combined['Училище_формат'] = klasirane_2022_combined['Училище_формат']. \
+    replace('Професионална гимназия по туризъм "Алеко Константинов"',
+            'ПГ туризъм "Алеко Константинов"')
 
 # unique_values = klasirane_2022_combined['Профил_1x'].sort_values().unique()
 # for value in unique_values:
