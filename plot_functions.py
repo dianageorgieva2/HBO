@@ -365,7 +365,7 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
     fig3.write_html(buffer, full_html=True, include_plotlyjs=True, config=config)
     components.html(buffer.getvalue(), width=None, height=600, scrolling=True)
 
-    with st.expander("Сурови данни"):
+    with st.expander("Таблица с данните"):
         st.dataframe(data=df_multiselect,
                      column_order=('Код паралелка', 'Паралелка_формат', 'Училище_формат', 'Училище_short', 'Район', 'Вид на паралелката',
                                    'Балообразуване', 'Форма на обучение', 'Брой паралелки', 'Година', 'Места_общ_брой',
