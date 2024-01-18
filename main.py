@@ -4,16 +4,14 @@ import streamlit as st
 import plotly.io as pio
 from data_statistika import stats_2020_clean, stats_2021_clean, stats_2022_clean, stats_2023_clean, \
     df_statistika_combined
-from data_klasirane_2023 import klasirane_2023_combined
-from data_klasirane_2022 import klasirane_2022_combined
-from data_klasirane_2021 import klasirane_2021_combined
-from data_klasirane_2020 import klasirane_2020_combined
+from data_klasirane_2023 import klasirane_2023_combined_function
+from data_klasirane_2022 import klasirane_2022_combined_function
+from data_klasirane_2021 import klasirane_2021_combined_function
+from data_klasirane_2020 import klasirane_2020_combined_function
 # Import the data for the new year
 from datetime import datetime
 from plot_functions import fig3_visualization
 from msg_history import get_message_history, create_message
-from streamlit.components.v1 import html, components
-import base64
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
@@ -40,36 +38,6 @@ hide_streamlit_style = """
     </style>
     """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
-
-# # Set background image (very hard to visualise properly)
-# def get_base64(bin_file):
-#     with open(bin_file, 'rb') as f:
-#         data = f.read()
-#     return base64.b64encode(data).decode()
-#
-#
-# def set_background(png_file):
-#     bin_str = get_base64(png_file)
-#     page_bg_img = '''
-#     <style>
-#     .main {
-#     background-image: url("data:image/png;base64,%s");
-#     background-size: auto;
-#     background-attachment: local;
-#     background-repeat: no-repeat;
-#     background-position: top left;
-#     }
-#
-#     [data-testid="baseButton-secondaryFormSubmit"] {
-#     background-color: rgb(195, 195, 195);
-#     }
-#     </style>
-#     ''' % bin_str
-#     st.markdown(page_bg_img, unsafe_allow_html=True)
-#
-#
-# set_background('images/bg_image_4.png')
 
 header = st.container()
 intro = st.container()
@@ -266,6 +234,11 @@ with visio_1:
 visio_2.markdown("<h3 style='text-align: center;'>Класиране - детайли</h3>", unsafe_allow_html=True)
 
 with visio_2:
+    klasirane_2023_combined = klasirane_2023_combined_function()
+    klasirane_2022_combined = klasirane_2022_combined_function()
+    klasirane_2021_combined = klasirane_2021_combined_function()
+    klasirane_2020_combined = klasirane_2020_combined_function()
+
     klasirane_all = [klasirane_2023_combined, klasirane_2022_combined, klasirane_2021_combined, klasirane_2020_combined]
     for df in klasirane_all:
         for uchilishte_code in df['Код училище']:
@@ -276,12 +249,14 @@ with visio_2:
                 df.loc[df['Код училище'] == uchilishte_code, 'Училище_short'] = \
                     df.loc[df['Код училище'] == uchilishte_code, 'Училище_формат'].values
 
+
     def button_function_mobile(year_label, klasirane_combined_df):
         fig3_visualization(klasirane_combined=klasirane_combined_df,
                            x_column=x_column,
                            x2_column=x2_column,
                            mobile=True,
                            year=year_label)
+
 
     def button_function(year_label, klasirane_combined_df):
         fig3_visualization(klasirane_combined=klasirane_combined_df,
@@ -317,15 +292,34 @@ with visio_2:
         else:
             button_function(year_label=2020, klasirane_combined_df=klasirane_2020_combined)
 
-# Message functionality and history features
-with comments:
-    st.markdown("<h3 style='text-align: center;'>Коментари</h3>", unsafe_allow_html=True)
+    st.write(
+        """
+        <div style="font-size: 10px; font-style: italic;">
+            Забележка: Балообразуването се формира, както следва: (общо 4 пъти точките от НВО) + 
+            (2 оценки от 7. клас от свидетелството за завършено основно образование, превърнати в точки). 
+            Изключение са паралелките, за които се балообразува освен с НВО и с резултати от изпити за проверка
+             на способностите и/или областни кръгове на олимпиади и национални състезания.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-    msg_history = get_message_history()
-    df_messages = pd.DataFrame(list(msg_history))
-    for _, message in df_messages.iterrows():
-        comments.info(f"{message['name']} ({message['time']})\n"
-                      f"{message['text']}")
+# Message functionality and history features
+st.markdown("<h3 style='text-align: center;'>Коментари</h3>", unsafe_allow_html=True)
+
+msg_history = get_message_history()
+df_messages = pd.DataFrame(list(reversed(msg_history)))
+
+comments_html = ""
+for _, message in df_messages.iterrows():
+    comments_html += f"<b><u>{message['name']} ({message['time']}</u></b>)<br>{message['text']}<br><br>"
+
+html_snippet = f"""
+    <div style="max-height: 300px; overflow-y: scroll; border: 1px solid #dddddd; border-radius: 10px; padding: 10px;">
+        {comments_html}
+    </div>
+"""
+st.markdown(html_snippet, unsafe_allow_html=True)
 
 # Create message form feature
 with st.form(key='form1', clear_on_submit=True):
@@ -343,37 +337,3 @@ with st.form(key='form1', clear_on_submit=True):
             create_message(msg=new_message)
             comments.info(f"{new_message['name']} ({new_message['time']})\n"
                           f"{new_message['text']}")
-
-# # Create comments section
-# with comments:
-#     st.markdown("<h3 style='text-align: center;'>Коментари</h3>", unsafe_allow_html=True)
-    # message_html = ""
-    # for _, message in msg_history.iterrows():
-    #     message_html += f"""
-    #     <div style="background-color: whitesmoke; border: 1px solid #ccc; border-radius: 10px;
-    #     padding: 5px; margin: 5px; height: auto;">
-    #         {icon_html}
-    #         <p>{message['name']} ({message['time']})</p>
-    #         <p>{message['text']}</p>
-    #     </div>
-    #     """
-    #
-    # html_snippet = f"""
-    # <div style="height: 300px; overflow-y: scroll;">
-    #     {message_html}
-    # </div>
-    # """
-    # html(html_snippet, height=400, scrolling=True)
-
-    # scroller = """
-    #     <div>
-    #         <style>
-    #         .css-5rimss.e1nzilvr5 {
-    #             overflow-y: auto;
-    #             max-height: 100px;
-    #         }
-    #         </style>
-    #     </div>
-    #     """
-    #
-    # comments.markdown(scroller, unsafe_allow_html=True)

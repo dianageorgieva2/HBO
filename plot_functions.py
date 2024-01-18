@@ -230,17 +230,19 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
     # Add the new year filter function
 
     # Select which filter function to be used
-    if year == 2023:  # Add the new year function
-        df_multiselect = filter_2023()
-    elif year == 2022:
-        df_multiselect = filter_2022()
-    elif year == 2021:
-        df_multiselect = filter_2021()
-    elif year == 2020:
-        df_multiselect = filter_2020()
+    if not st.multiselect:
+        df_multiselect = klasirane_combined
+    else:
+        if year == 2023:  # Add the new year function
+            df_multiselect = filter_2023()
+        elif year == 2022:
+            df_multiselect = filter_2022()
+        elif year == 2021:
+            df_multiselect = filter_2021()
+        elif year == 2020:
+            df_multiselect = filter_2020()
 
     fig3 = sp.make_subplots(rows=1, cols=2, shared_xaxes=True, column_widths=[0.23, 0.77])
-    code_to_uchilishte_map = dict(df_multiselect[['Код паралелка', 'Училище_short']].drop_duplicates().values)
     code_to_uchilishte_map = dict(
         df_multiselect[['Код паралелка', 'Училище_short']].astype(str).drop_duplicates().values)
     code_to_paral_map = dict(zip(df_multiselect['Код паралелка'], df_multiselect['Паралелка']))
@@ -280,13 +282,14 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
     for k in df_multiselect['Класиране'].unique():
         df_k = df_multiselect[df_multiselect['Класиране'] == k]
         if not mobile:
-           yticks_text = [f"{'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=30))} " 
-                          f"<br> <i style='color:#808095;'>{code_to_uchilishte_map[code][:25]}</i>"
-                          f"{'...' if len(code_to_uchilishte_map[code]) > 25 else ''}"
-                          for code in df_multiselect['Код паралелка'].unique()]
+            yticks_text = [f"{'<br>'.join(textwrap.wrap(code_to_paral_map[code], width=30))} " 
+                           f"<br> <i style='color:#808095;'>{code_to_uchilishte_map[code][:25]}</i>"
+                           f"{'...' if len(code_to_uchilishte_map[code]) > 25 else ''}"
+                           for code in df_multiselect['Код паралелка'].unique()]
 
         else:
             yticks_text = [f"{code}" for code in df_multiselect['Код паралелка'].unique()]
+
         mesta = go.Scatter(x=np.full(len(df_k), 'Свободни<br>места'),
                            y=df_k['Код паралелка'],
                            name=f'{k} класиране',
@@ -367,10 +370,11 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
 
     with st.expander("Таблица с данните"):
         st.dataframe(data=df_multiselect,
-                     column_order=('Код паралелка', 'Паралелка_формат', 'Училище_формат', 'Училище_short', 'Район', 'Вид на паралелката',
-                                   'Балообразуване', 'Форма на обучение', 'Брой паралелки', 'Година', 'Места_общ_брой',
-                                   'Места_общ_брой_м', 'Места_общ_брой_д', 'Класиране', 'Мин_бал_о', 'Мин_бал_м', 'Мин_бал_ж',
-                                   'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж', 'Профил_1', 'Профил_2', 'Профил_3'),
+                     column_order=('Код паралелка', 'Паралелка_формат', 'Училище_формат', 'Училище_short', 'Район',
+                                   'Вид на паралелката', 'Балообразуване', 'Форма на обучение', 'Брой паралелки',
+                                   'Година', 'Места_общ_брой', 'Места_общ_брой_м', 'Места_общ_брой_д', 'Класиране',
+                                   'Мин_бал_о', 'Мин_бал_м', 'Мин_бал_ж', 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж',
+                                   'Профил_1', 'Профил_2', 'Профил_3'),
                      column_config={
                          'Код паралелка': 'Код паралелка',
                          'Паралелка_формат': 'Паралелка',
