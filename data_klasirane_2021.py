@@ -81,9 +81,12 @@ def klasirane_2021_combined_function():
         klasirane_2021_1_clean['Максимален бал']
     klasirane_2021_1_clean = klasirane_2021_1_clean.groupby('Код паралелка', as_index=False).sum()
     klasirane_2021_1_clean["Мин_бал_о"] = klasirane_2021_1_clean.apply(
-        lambda row: min(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_о"] == 0 else row["Мин_бал_о"], axis=1)
+        lambda row: (min(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_о"] == 0 and row["Мин_бал_м"] != 0 and row["Мин_бал_ж"] != 0
+                     else (max(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_о"] == 0 and (row["Мин_бал_м"] == 0 or row["Мин_бал_ж"] == 0)
+                           else row["Мин_бал_о"])), axis=1)
     klasirane_2021_1_clean["Макс_бал_о"] = klasirane_2021_1_clean.apply(
         lambda row: max(row["Макс_бал_м"], row["Макс_бал_ж"]) if row["Макс_бал_о"] == 0 else row["Макс_бал_о"], axis=1)
+
     klasirane_2021_1_clean = klasirane_2021_1_clean.sort_values(by='Код паралелка')
     klasirane_2021_1_clean.reset_index(drop=True, inplace=True)
     klasirane_2021_1_clean = pd.merge(kodove_2021_clean, klasirane_2021_1_clean, on="Код паралелка", how='outer')
@@ -133,7 +136,9 @@ def klasirane_2021_combined_function():
         klasirane_2021_2_clean['Максимален бал']
     klasirane_2021_2_clean = klasirane_2021_2_clean.groupby('Код паралелка', as_index=False).sum()
     klasirane_2021_2_clean["Мин_бал_о"] = klasirane_2021_2_clean.apply(
-        lambda row: min(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_о"] == 0 else row["Мин_бал_о"], axis=1)
+        lambda row: (min(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_о"] == 0 and row["Мин_бал_м"] != 0 and row["Мин_бал_ж"] != 0
+                     else (max(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_о"] == 0 and (row["Мин_бал_м"] == 0 or row["Мин_бал_ж"] == 0)
+                           else row["Мин_бал_о"])), axis=1)
     klasirane_2021_2_clean["Макс_бал_о"] = klasirane_2021_2_clean.apply(
         lambda row: max(row["Макс_бал_м"], row["Макс_бал_ж"]) if row["Макс_бал_о"] == 0 else row["Макс_бал_о"], axis=1)
     klasirane_2021_2_clean = klasirane_2021_2_clean.sort_values(by='Код паралелка')
@@ -203,7 +208,9 @@ def klasirane_2021_combined_function():
         klasirane_2021_3_clean['Максимален бал']
     klasirane_2021_3_clean = klasirane_2021_3_clean.groupby('Код паралелка', as_index=False).sum()
     klasirane_2021_3_clean["Мин_бал_о"] = klasirane_2021_3_clean.apply(
-        lambda row: min(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_о"] == 0 else row["Мин_бал_о"], axis=1)
+        lambda row: (min(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_о"] == 0 and row["Мин_бал_м"] != 0 and row["Мин_бал_ж"] != 0
+                     else (max(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_о"] == 0 and (row["Мин_бал_м"] == 0 or row["Мин_бал_ж"] == 0)
+                           else row["Мин_бал_о"])), axis=1)
     klasirane_2021_3_clean["Макс_бал_о"] = klasirane_2021_3_clean.apply(
         lambda row: max(row["Макс_бал_м"], row["Макс_бал_ж"]) if row["Макс_бал_о"] == 0 else row["Макс_бал_о"], axis=1)
     klasirane_2021_3_clean = klasirane_2021_3_clean.sort_values(by='Код паралелка')
