@@ -20,6 +20,7 @@ pd.set_option('display.max_colwidth', None)
 # ----------KLASIRANE 2020----------
 @st.cache_data()
 def klasirane_2020_combined_function():
+
     # Data import
     mesta_2020_3 = pd.read_csv('klasirane/2020/свободни-места-за-3-етап-2020_.csv', encoding='utf-8', encoding_errors='ignore')
     mesta_2020_4 = pd.read_csv('klasirane/2020/Свободни-места-за-4-етап-2020.csv', encoding='utf-8', encoding_errors='ignore')
@@ -104,11 +105,13 @@ def klasirane_2020_combined_function():
     })
 
     klasirane_2020_1_clean["Мин_бал_о"] = klasirane_2020_1_clean.apply(
-        lambda row: min(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_о"] == 0 and row["Мин_бал_м"] != 0 and row["Мин_бал_ж"] != 0
-        else max(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_м"] == 0 or row["Мин_бал_ж"] == 0 and row["Мин_бал_о"] == 0
-        else row["Мин_бал_о"], axis=1)
+        lambda row: (min(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_о"] == 0 and row["Мин_бал_м"] != 0 and row["Мин_бал_ж"] != 0
+                     else (max(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_о"] == 0 and (row["Мин_бал_м"] == 0 or row["Мин_бал_ж"] == 0)
+                           else row["Мин_бал_о"])), axis=1)
+
     klasirane_2020_1_clean["Макс_бал_о"] = klasirane_2020_1_clean.apply(
         lambda row: max(row["Макс_бал_м"], row["Макс_бал_ж"]) if row["Макс_бал_о"] == 0 else row["Макс_бал_о"], axis=1)
+
     klasirane_2020_1_clean = klasirane_2020_1_clean.sort_values(by='Код паралелка')
     klasirane_2020_1_clean.reset_index(drop=True, inplace=True)
     klasirane_2020_1_clean = pd.merge(kodove_2020_clean, klasirane_2020_1_clean, on="Код паралелка", how='outer')
@@ -177,9 +180,9 @@ def klasirane_2020_combined_function():
         'Макс_бал_ж': 'sum'})
 
     klasirane_2020_2_clean["Мин_бал_о"] = klasirane_2020_2_clean.apply(
-        lambda row: min(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_о"] == 0 and row["Мин_бал_м"] != 0 and row["Мин_бал_ж"] != 0
-        else max(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_м"] == 0 or row["Мин_бал_ж"] == 0 and row["Мин_бал_о"] == 0
-        else row["Мин_бал_о"], axis=1)
+        lambda row: (min(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_о"] == 0 and row["Мин_бал_м"] != 0 and row["Мин_бал_ж"] != 0
+                     else (max(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_о"] == 0 and (row["Мин_бал_м"] == 0 or row["Мин_бал_ж"] == 0)
+                           else row["Мин_бал_о"])), axis=1)
     klasirane_2020_2_clean["Макс_бал_о"] = klasirane_2020_2_clean.apply(
         lambda row: max(row["Макс_бал_м"], row["Макс_бал_ж"]) if row["Макс_бал_о"] == 0 else row["Макс_бал_о"], axis=1)
     klasirane_2020_2_clean = klasirane_2020_2_clean.sort_values(by='Код паралелка')
@@ -268,10 +271,10 @@ def klasirane_2020_combined_function():
         'Макс_бал_м': 'sum',
         'Макс_бал_ж': 'sum'})
 
-    klasirane_2020_3_clean["Мин_бал_о"] = klasirane_2020_3_clean.apply(
-        lambda row: min(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_о"] == 0 and row["Мин_бал_м"] != 0 and row["Мин_бал_ж"] != 0
-        else max(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_м"] == 0 or row["Мин_бал_ж"] == 0 and row["Мин_бал_о"] == 0
-        else row["Мин_бал_о"], axis=1)
+    klasirane_2020_1_clean["Мин_бал_о"] = klasirane_2020_1_clean.apply(
+        lambda row: (min(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_о"] == 0 and row["Мин_бал_м"] != 0 and row["Мин_бал_ж"] != 0
+                     else (max(row["Мин_бал_м"], row["Мин_бал_ж"]) if row["Мин_бал_о"] == 0 and (row["Мин_бал_м"] == 0 or row["Мин_бал_ж"] == 0)
+                           else row["Мин_бал_о"])), axis=1)
     klasirane_2020_3_clean["Макс_бал_о"] = klasirane_2020_3_clean.apply(
         lambda row: max(row["Макс_бал_м"], row["Макс_бал_ж"]) if row["Макс_бал_о"] == 0 else row["Макс_бал_о"], axis=1)
     klasirane_2020_3_clean = klasirane_2020_3_clean.sort_values(by='Код паралелка')
