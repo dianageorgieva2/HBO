@@ -101,11 +101,9 @@ with intro:
         "едно място за да се даде възможност за интерактивен анализ.<br>"
         "Надявам се 'НВО навигатора' да ти е полезен и те каня да оставиш коментари с въпроси или предложения. <br>"
         "УСПЕХ НА ВСИЧКИ 😊</p>", unsafe_allow_html=True)
-    import streamlit as st
-
-st.markdown(
-    "<p style='text-align: center; font-size: 24px;'><strong>В МОМЕНТА ДОБАВЯМЕ ДАННИТЕ ЗА 2024!</strong></p>", 
-    unsafe_allow_html=True)
+    st.markdown(
+        "<p style='text-align: center; font-size: 24px;'><strong>В МОМЕНТА ДОБАВЯМЕ ДАННИТЕ ЗА 2024!</strong></p>", 
+        unsafe_allow_html=True)
 
 # Create visualization_1 (fig1 and fig2)
 with visio_1:
