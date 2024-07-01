@@ -1,7 +1,11 @@
+# INSTRUCTIONS FOR NEW YEAR FILES IMPORT, CLEANING, STANDARTISATION
+# 1. Copy data_statistika_LAST YEAR into the same file and change manually the name (don't refactor or replace all)
+# 2. Import correct files from the respective folder
+# 3. Add stats_NEWYEAR_clean to the combined_stats at the bottom
+
 import pandas as pd
 import numpy as np
 import plotly.io as pio
-import streamlit as st
 
 pio.templates.default = "plotly"
 pd.set_option('display.max_columns', None)
@@ -10,6 +14,34 @@ pd.set_option('display.width', 1000)
 pd.options.display.float_format = '{:,.2f}'.format
 
 # ----------STATISTIKA ALL YEARS----------
+
+# Stats data 2024
+stats_2024 = pd.read_csv('statistika/statistika_mat_bel_2024.csv', encoding='utf-8', encoding_errors='ignore')
+stats_2024_clean = stats_2024.rename(columns={
+                           "Статистика за успеваемостта, НВО 7. клас": "Категория точки",
+                           "Unnamed: 1": "БЕЛ",
+                           "Unnamed: 3": "БЕЛ_м",
+                           "Unnamed: 5": "БЕЛ_ж",
+                           "Unnamed: 7": "МАТ",
+                           "Unnamed: 9": "МАТ_м",
+                           "Unnamed: 11": "МАТ_ж",
+                           "Unnamed: 13": "общо",
+                           "Unnamed: 15": "общо_м",
+                           "Unnamed: 17": "общо_д"})
+stats_2024_clean = stats_2024_clean.drop(['Unnamed: 2', 'Unnamed: 4', 'Unnamed: 6',  'Unnamed: 8', 'Unnamed: 10',
+                                          'Unnamed: 12', 'Unnamed: 14', 'Unnamed: 16', 'Unnamed: 18'], axis=1)
+stats_2024_clean = stats_2024_clean.drop([0, 1, 2, 3], axis=0)
+stats_2024_clean = stats_2024_clean.fillna(0)
+stats_2024_clean[['общо', 'общо_м', 'общо_д', 'МАТ', 'МАТ_м', 'МАТ_ж', 'БЕЛ', 'БЕЛ_м', 'БЕЛ_ж']] = \
+    stats_2024_clean[['общо', 'общо_м', 'общо_д', 'МАТ', 'МАТ_м', 'МАТ_ж', 'БЕЛ', 'БЕЛ_м', 'БЕЛ_ж']].astype(int)
+stats_2024_clean.reset_index(drop=True, inplace=True)
+stats_2024_clean["ТОЧКИ"] = pd.Series(np.arange(0, 201, 0.5))
+stats_2024_clean["Година"] = "2024"
+hist, bin_edges = np.histogram(stats_2024_clean.ТОЧКИ, bins=20)
+stats_2024_clean['Bin'] = pd.cut(stats_2024_clean.ТОЧКИ, bins=bin_edges)
+stats_2024_clean['Bin'] = stats_2024_clean['Bin'].apply(lambda x: f"{x.left:.0f} - {x.right:.0f}")
+
+
 # Stats data 2023
 stats_2023 = pd.read_csv('statistika/statistika_mat_bel_2023.csv', encoding='utf-8', encoding_errors='ignore')
 stats_2023_clean = stats_2023.rename(columns={
@@ -36,6 +68,7 @@ stats_2023_clean["Година"] = "2023"
 hist, bin_edges = np.histogram(stats_2023_clean.ТОЧКИ, bins=20)
 stats_2023_clean['Bin'] = pd.cut(stats_2023_clean.ТОЧКИ, bins=bin_edges)
 stats_2023_clean['Bin'] = stats_2023_clean['Bin'].apply(lambda x: f"{x.left:.0f} - {x.right:.0f}")
+
 
 # Stats data 2022
 stats_2022 = pd.read_csv('statistika/statistika_mat_bel_2022.csv', encoding='utf-8', encoding_errors='ignore')
@@ -114,7 +147,7 @@ stats_2020_clean['Bin'] = pd.cut(stats_2020_clean.ТОЧКИ, bins=bin_edges)
 stats_2020_clean['Bin'] = stats_2020_clean['Bin'].apply(lambda x: f"{x.left:.0f} - {x.right:.0f}")
 
 # Data preparation
-df_statistika_combined = pd.concat([stats_2023_clean, stats_2022_clean, stats_2021_clean, stats_2020_clean], axis=0)
+df_statistika_combined = pd.concat([stats_2024_clean, stats_2023_clean, stats_2022_clean, stats_2021_clean, stats_2020_clean], axis=0)
 
 df_statistika_combined["tochki_sum_o"] = df_statistika_combined.общо * df_statistika_combined.ТОЧКИ
 df_statistika_combined["tochki_sum_m"] = df_statistika_combined.общо_м * df_statistika_combined.ТОЧКИ
@@ -125,4 +158,3 @@ df_statistika_combined["tochki_avg_m"] = (df_statistika_combined.tochki_sum_m / 
 df_statistika_combined["tochki_avg_w"] = (df_statistika_combined.tochki_sum_w / df_statistika_combined.общо_д).round(2)
 df_statistika_combined["tochki_avg_o"] = (df_statistika_combined.tochki_sum_o / df_statistika_combined.общо).round(2)
 df_statistika_combined.reset_index(inplace=True)
-
