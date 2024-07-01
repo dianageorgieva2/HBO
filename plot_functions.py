@@ -1,3 +1,7 @@
+# INSTRUCTIONS FOR NEW YEAR FILES IMPORT, CLEANING, STANDARTISATION
+# 1. Add filter_NEWYEAR() function as a copy from past year and change manually the year
+# 2. Update df_multiselect
+
 import numpy as np
 import plotly.graph_objects as go
 import io
@@ -10,6 +14,61 @@ import plotly
 
 # Visualization of fig3 for desktop
 def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
+    # Define filter function for 2024
+    def filter_2024():
+        df = klasirane_combined
+        filters = ['Училище_формат', 'Код паралелка', 'Паралелка_формат', 'Профил_1', 'Профил_2']
+        placeholder_names = ['Училище', 'Код паралелка', 'Паралелка', 'Профил_1', 'Профил_2']
+
+        filters = {filter_name: [] for filter_name in filters}
+
+        if 'filters' not in st.session_state:
+            st.session_state['filters'] = filters
+
+        def filter_df(except_filter=None):
+            filtered_df = df.copy()
+            for key, values in st.session_state.filters.items():
+                if key != except_filter and values:
+                    filtered_df = filtered_df[filtered_df[key].isin(values)]
+            return filtered_df
+
+        def display_filters(num_columns=5, gap="small"):
+            filters_changed = False
+            counter = 1
+            max_value = num_columns
+            col_list = st.columns(num_columns, gap=gap)
+
+            for filter_name in st.session_state.filters.keys():
+                filtered_df = filter_df(filter_name)
+                options = sorted(filtered_df[filter_name].unique().tolist())
+
+                # Remove selected values that are not in options anymore
+                valid_selections = [v for v in st.session_state.filters[filter_name] if v in options]
+                if valid_selections != st.session_state.filters[filter_name]:
+                    st.session_state.filters[filter_name] = valid_selections
+                    filters_changed = True
+
+                with col_list[counter - 1]:
+                    selected = st.multiselect(" ", options,
+                                              default=st.session_state.filters[filter_name],
+                                              placeholder=f"{placeholder_names[counter - 1]}")
+
+                # increase counter and reset to 1 if max_value is reached
+                counter += 1
+                counter = counter % (max_value + 1)
+                if counter == 0:
+                    counter = 1
+
+                if selected != st.session_state.filters[filter_name]:
+                    st.session_state.filters[filter_name] = selected
+                    filters_changed = True
+
+            if filters_changed:
+                st.rerun()
+
+        display_filters(num_columns=5, gap="small")
+        return filter_df()
+
     # Define filter function for 2023
     def filter_2023():
         df = klasirane_combined
@@ -233,7 +292,9 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
     if not st.multiselect:
         df_multiselect = klasirane_combined
     else:
-        if year == 2023:  # Add the new year function
+        if year == 2024:  # Add the new year function
+            df_multiselect = filter_2024()
+        elif year == 2023:
             df_multiselect = filter_2023()
         elif year == 2022:
             df_multiselect = filter_2022()
