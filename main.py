@@ -120,11 +120,6 @@ with intro:
         "Надявам се 'НВО навигатора' да ти е полезен и те каня да оставиш коментар с въпроси или предложения. <br>"
         "УСПЕХ НА ВСИЧКИ 😊</p>", unsafe_allow_html=True)
 
-    st.markdown(
-        "<p style='text-align: center; font-size: 24px;'><strong>В МОМЕНТА ДОБАВЯМЕ ДАННИТЕ ЗА 2024!</strong></p>",
-        unsafe_allow_html=True
-    )
-
 # Create visualization_1 (fig1 and fig2)
 with visio_1:
     col1, col2 = st.columns(2, gap='medium')
