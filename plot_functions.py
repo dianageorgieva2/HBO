@@ -286,8 +286,6 @@ def fig3_visualization(klasirane_combined, x_column, x2_column, mobile, year):
         display_filters0(num_columns0=5, gap0="small")
         return filter_df0()
 
-    # Add the new year filter function
-
     # Select which filter function to be used
     if not st.multiselect:
         df_multiselect = klasirane_combined
