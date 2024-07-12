@@ -6,6 +6,7 @@
 import pandas as pd
 import numpy as np
 import plotly.io as pio
+from datetime import datetime
 
 pio.templates.default = "plotly"
 pd.set_option('display.max_columns', None)
@@ -146,15 +147,23 @@ hist, bin_edges = np.histogram(stats_2020_clean.ТОЧКИ, bins=20)
 stats_2020_clean['Bin'] = pd.cut(stats_2020_clean.ТОЧКИ, bins=bin_edges)
 stats_2020_clean['Bin'] = stats_2020_clean['Bin'].apply(lambda x: f"{x.left:.0f} - {x.right:.0f}")
 
-# Data preparation
-df_statistika_combined = pd.concat([stats_2024_clean, stats_2023_clean, stats_2022_clean, stats_2021_clean, stats_2020_clean], axis=0)
 
-df_statistika_combined["tochki_sum_o"] = df_statistika_combined.общо * df_statistika_combined.ТОЧКИ
-df_statistika_combined["tochki_sum_m"] = df_statistika_combined.общо_м * df_statistika_combined.ТОЧКИ
-df_statistika_combined["tochki_sum_w"] = df_statistika_combined.общо_д * df_statistika_combined.ТОЧКИ
-df_statistika_combined = df_statistika_combined.groupby("Година")[["общо_м", "общо_д", "общо", "tochki_sum_m",
-                                                                   "tochki_sum_w", "tochki_sum_o"]].agg("sum")
-df_statistika_combined["tochki_avg_m"] = (df_statistika_combined.tochki_sum_m / df_statistika_combined.общо_м).round(2)
-df_statistika_combined["tochki_avg_w"] = (df_statistika_combined.tochki_sum_w / df_statistika_combined.общо_д).round(2)
-df_statistika_combined["tochki_avg_o"] = (df_statistika_combined.tochki_sum_o / df_statistika_combined.общо).round(2)
-df_statistika_combined.reset_index(inplace=True)
+# Data preparation with input if PREMIUM or not
+def all_stats(premium):
+    all_stats_list = [stats_2024_clean, stats_2023_clean, stats_2022_clean, stats_2021_clean, stats_2020_clean]
+    if premium is True:
+        df_statistika_combined = pd.concat(all_stats_list, axis=0)
+    else:
+        all_stats_list = all_stats_list[1:]
+        df_statistika_combined = pd.concat(all_stats_list, axis=0)
+    # df_statistika_combined = pd.concat([stats_2024_clean, stats_2023_clean, stats_2022_clean, stats_2021_clean, stats_2020_clean], axis=0)
+    df_statistika_combined["tochki_sum_o"] = df_statistika_combined.общо * df_statistika_combined.ТОЧКИ
+    df_statistika_combined["tochki_sum_m"] = df_statistika_combined.общо_м * df_statistika_combined.ТОЧКИ
+    df_statistika_combined["tochki_sum_w"] = df_statistika_combined.общо_д * df_statistika_combined.ТОЧКИ
+    df_statistika_combined = df_statistika_combined.groupby("Година")[["общо_м", "общо_д", "общо", "tochki_sum_m",
+                                                                       "tochki_sum_w", "tochki_sum_o"]].agg("sum")
+    df_statistika_combined["tochki_avg_m"] = (df_statistika_combined.tochki_sum_m / df_statistika_combined.общо_м).round(2)
+    df_statistika_combined["tochki_avg_w"] = (df_statistika_combined.tochki_sum_w / df_statistika_combined.общо_д).round(2)
+    df_statistika_combined["tochki_avg_o"] = (df_statistika_combined.tochki_sum_o / df_statistika_combined.общо).round(2)
+    df_statistika_combined.reset_index(inplace=True)
+    return df_statistika_combined, all_stats_list
