@@ -7,10 +7,10 @@
 
 import pandas as pd
 import plotly.graph_objects as go
+import streamlit
 import streamlit as st
 import plotly.io as pio
-from data_statistika import stats_2020_clean, stats_2021_clean, stats_2022_clean, stats_2023_clean, stats_2024_clean, \
-    df_statistika_combined
+from data_statistika import all_stats
 from data_klasirane_2024 import klasirane_2024_combined_function
 from data_klasirane_2023 import klasirane_2023_combined_function
 from data_klasirane_2022 import klasirane_2022_combined_function
@@ -20,11 +20,13 @@ from datetime import datetime
 from plot_functions import fig3_visualization
 from msg_history import get_message_history, create_message
 # from authentication import login_function, signup_function
+# from personal_nvo_nvigator import personal_nvo_navigator
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 pd.set_option('display.width', 1000)
 pd.options.display.float_format = '{:,.2f}'.format
+PREMIUM = True
 
 # Dashboard layout
 pio.templates.default = "simple_white"
@@ -54,6 +56,8 @@ visio_1 = st.container()
 st.divider()
 visio_2 = st.container()
 st.divider()
+# visio_3 = st.container()
+# st.divider()
 comments = st.container()
 
 with st.sidebar:
@@ -84,14 +88,26 @@ with st.sidebar:
     mobile_toggle = st.toggle('Адаптирана версия за смарт телефон')
     st.divider()
 
-    # # Authentication functionality embeded in the sidebar
+    # # Authentication functionality embedded in the sidebar
     # mobile_toggle1 = st.toggle('Данни 2024г.')
     # if mobile_toggle1:
     #     tab1, tab2 = st.sidebar.tabs(["Вход", "Регистрация"])
     #     with tab1:
-    #         login_function()
+    #         name, authentication_status, username = login_function()
+    #         if authentication_status:
+    #             PREMIUM = True
+    #             st.success(f'Здравей, {name}! Данните са заредени.')
+    #         elif authentication_status == False:
+    #             st.error('Неправилeн имейл и/или парола.')
+    #         elif authentication_status == None:
+    #             st.warning('Моля въведи имейл и парола!')
     #     with tab2:
-    #         signup_function()
+    #         if signup_function() is True:
+    #             PREMIUM = True
+    #             st.success('Данните са заредени.')
+    # st.divider()
+    #
+    # personal_toggle = st.toggle('Персонален НВО Навигатор')
     # st.divider()
 
     st.write("Използван сайт на МОН: [ЛИНК](https://ruo-sofia-grad.com/%D0%B8%D0%B7%D0%BF%D0%B8%D1%82%D0%B8-%D0%B8-"
@@ -116,56 +132,42 @@ with intro:
         "<p style='text-align: center;'>Здравей!<br>Тук са събрани данните относно "
         "Националното Външно Оценяване (НВО) за гр.София, публикувани - "
         "резултати от матурите, класиране, свободни места и още. Целта е информацията да се визуализира на "
-        "едно място за да се даде възможност за интерактивен анализ.<br>"
+        "едно място, за да се даде възможност за интерактивен анализ.<br>"
         "Надявам се 'НВО навигатора' да ти е полезен и те каня да оставиш коментар с въпроси или предложения. <br>"
         "УСПЕХ НА ВСИЧКИ 😊</p>", unsafe_allow_html=True)
+
+    # st.markdown(
+    #     "<p style='text-align: center; font-size: 24px;'><strong>В МОМЕНТА ДОБАВЯМЕ ДАННИТЕ ЗА 2024!</strong></p>",
+    #     unsafe_allow_html=True
+    # )
 
 # Create visualization_1 (fig1 and fig2)
 with visio_1:
     col1, col2 = st.columns(2, gap='medium')
+    df_statistika_combined, all_stats_list = all_stats(premium=PREMIUM)
 
     # Data visualization fig1
     with col2:
         st.markdown("<h3 style='text-align: center;'>НВО Успеваемост</h3>", unsafe_allow_html=True)
         fig = go.Figure()
         histogram = go.Histogram(
-                           x=stats_2024_clean["Bin"],
-                           y=stats_2024_clean[y_column],
+                           x=all_stats_list[0]["Bin"],
+                           y=all_stats_list[0][y_column],
                            histfunc='sum',
-                           name='2024',
+                           name=str(all_stats_list[0]["Година"].unique()[0]),
                            hovertemplate='%{y} ученици'
                            )
         fig.add_trace(histogram)
-        df_grouped_2023 = stats_2023_clean.query("Година == '2023'").groupby("Bin", as_index=False)[y_column].sum()
-        line_2023 = go.Scatter(x=df_grouped_2023["Bin"],
-                               y=df_grouped_2023[y_column],
-                               mode='lines',
-                               line=dict(width=2),
-                               name='2023',
-                               hovertemplate='%{y} ученици')
-        df_grouped_2022 = stats_2022_clean.query("Година == '2022'").groupby("Bin", as_index=False)[y_column].sum()
-        line_2022 = go.Scatter(x=df_grouped_2023["Bin"],
-                               y=df_grouped_2022[y_column],
-                               mode='lines',
-                               line=dict(width=2),
-                               name='2022',
-                               hovertemplate='%{y} ученици')
-        df_grouped_2021 = stats_2021_clean.query("Година == '2021'").groupby("Bin", as_index=False)[y_column].sum()
-        line_2021 = go.Scatter(x=df_grouped_2023["Bin"],
-                               y=df_grouped_2021[y_column],
-                               mode='lines',
-                               line=dict(width=2),
-                               name='2021',
-                               hovertemplate='%{y} ученици')
-        df_grouped_2020 = stats_2020_clean.query("Година == '2020'").groupby("Bin", as_index=False)[y_column].sum()
-        line_2020 = go.Scatter(x=df_grouped_2023["Bin"],
-                               y=df_grouped_2020[y_column],
-                               mode='lines',
-                               line=dict(width=2),
-                               marker=dict(size=6),
-                               name='2020',
-                               hovertemplate='%{y} ученици')
-        fig.add_traces([line_2023, line_2022, line_2021, line_2020])
+        all_stats_list_lines = all_stats_list[1:]
+        for item in all_stats_list_lines:
+            df_grouped = item.groupby("Bin", as_index=False)[y_column].sum()
+            line = go.Scatter(x=df_grouped["Bin"],
+                              y=df_grouped[y_column],
+                              mode='lines',
+                              line=dict(width=2),
+                              name=str(item["Година"].unique()[0]),
+                              hovertemplate='%{y} ученици')
+            fig.add_traces(line)
 
         fig.update_layout(
             hovermode="x unified",
@@ -194,8 +196,7 @@ with visio_1:
 
     # Data visualization fig2
     with col1:
-        st.markdown("<h3 style='text-align: center;'>НВО статистика</h3>", unsafe_allow_html=True)
-
+        st.markdown("<h3 style='text-align: center;'>НВО Статистика</h3>", unsafe_allow_html=True)
         fig2 = go.Figure()
         bar_trace = go.Bar(x=df_statistika_combined["Година"],
                            y=df_statistika_combined[y_column],
@@ -257,18 +258,23 @@ with visio_1:
 visio_2.markdown("<h3 style='text-align: center;'>Класиране - детайли</h3>", unsafe_allow_html=True)
 
 with visio_2:
+    #Add the new year vaariable after importing the new year function
     klasirane_2024_combined = klasirane_2024_combined_function()
     klasirane_2023_combined = klasirane_2023_combined_function()
     klasirane_2022_combined = klasirane_2022_combined_function()
     klasirane_2021_combined = klasirane_2021_combined_function()
     klasirane_2020_combined = klasirane_2020_combined_function()
 
-    klasirane_all = [klasirane_2023_combined, klasirane_2022_combined, klasirane_2021_combined, klasirane_2020_combined]
+    # Add new year on top of the dictionary
+    klasirane_all = [klasirane_2024_combined, klasirane_2023_combined, klasirane_2022_combined, klasirane_2021_combined, klasirane_2020_combined]
+
+    #As a new year is added change the attribute of klasirane_all to point to the last one
+    # (i.e. in 2025 it will be 4+1=5)
     for df in klasirane_all:
         for uchilishte_code in df['Код училище']:
-            if uchilishte_code in klasirane_all[3]['Код училище'].values:
+            if uchilishte_code in klasirane_all[4]['Код училище'].values:
                 df.loc[df['Код училище'] == uchilishte_code, 'Училище_short'] = \
-                    klasirane_all[3].loc[klasirane_all[3]['Код училище'] == uchilishte_code, 'Училище_формат'].values[0]
+                    klasirane_all[4].loc[klasirane_all[4]['Код училище'] == uchilishte_code, 'Училище_формат'].values[0]
             else:
                 df.loc[df['Код училище'] == uchilishte_code, 'Училище_short'] = \
                     df.loc[df['Код училище'] == uchilishte_code, 'Училище_формат'].values
@@ -292,11 +298,15 @@ with visio_2:
     radio_button = visio_2.radio(label=' ', options=['2024', '2023', '2022', '2021', '2020'], horizontal=True)
     # Add the new year to the radio button options and extend the functionality below when selected
     if radio_button == '2024':
-        st.write('В очакване на 1во класиране')
-        # if mobile_toggle:
-        #     button_function_mobile(year_label=2024, klasirane_combined_df=klasirane_2024_combined)
+        # if not PREMIUM:
+        #     st.write('Регисттрирай се за данните от 2024г.')
         # else:
-        #     button_function(year_label=2024, klasirane_combined_df=klasirane_2024_combined)
+        #     st.write('В очакване на 1во класиране')
+
+        if mobile_toggle:
+            button_function_mobile(year_label=2024, klasirane_combined_df=klasirane_2024_combined)
+        else:
+            button_function(year_label=2024, klasirane_combined_df=klasirane_2024_combined)
 
     if radio_button == '2023':
         if mobile_toggle:
@@ -333,6 +343,20 @@ with visio_2:
         """,
         unsafe_allow_html=True
     )
+
+# with visio_3:
+#     if personal_toggle:
+#         st.markdown("<h3 style='text-align: center;'>ПЕРСОНАЛЕН НВО НАВИГАТОР</h3>", unsafe_allow_html=True)
+#         personal_nvo_navigator(klasirane_combined_df=klasirane_2023_combined)
+#
+#     klasirane_2023_combined['Мин_бал_о'] = klasirane_2023_combined['Мин_бал_о'].fillna(0)
+#     aggregated_df = klasirane_2023_combined.groupby('Код паралелка').agg({
+#         'Паралелка': 'first',
+#         'Училище_short': 'first',
+#         'Мин_бал_о': lambda x: list(map(float, x)),
+#     })
+#     # print(klasirane_2023_combined[klasirane_2023_combined["Класиране"] == 1].shape)
+#     # print(type(aggregated_df['Мин_бал_о'].iloc[0][0]))  # This should show 'int'
 
 # Message functionality and history features
 st.markdown("<h3 style='text-align: center;'>Коментари</h3>", unsafe_allow_html=True)
