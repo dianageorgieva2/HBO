@@ -128,6 +128,7 @@ def klasirane_2024_combined_function():
                             'Места_общ_брой_д', 'Класиране', 'Мин_бал_о', 'Мин_бал_м',
                             'Мин_бал_ж', 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']] = np.nan
     klasirane_2024_2_clean["Класиране"] = '2'
+    klasirane_2024_2_clean["Класиране"] = klasirane_2024_2_clean["Класиране"].astype(int)
     # klasirane_2024_2_clean = klasirane_2024_2.rename(columns={
     #                            "Unnamed: 1": "Код училище",
     #                            "Unnamed: 3": "Код паралелка",
@@ -174,6 +175,7 @@ def klasirane_2024_combined_function():
                             'Места_общ_брой_д', 'Класиране', 'Мин_бал_о', 'Мин_бал_м',
                             'Мин_бал_ж', 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']] = np.nan
     klasirane_2024_3_clean["Класиране"] = '3'
+    klasirane_2024_3_clean["Класиране"] = klasirane_2024_3_clean["Класиране"].astype(int)
     # mesta_2024_3_clean = mesta_2024_3.drop(mesta_2024_3.columns[[0, 2, 4, 5]], axis=1)
     # mesta_2024_3_clean = mesta_2024_3_clean.rename(columns={
     #                            "Unnamed: 1": "Код училище",
@@ -235,6 +237,7 @@ def klasirane_2024_combined_function():
                             'Места_общ_брой_д', 'Класиране', 'Мин_бал_о', 'Мин_бал_м',
                             'Мин_бал_ж', 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']] = np.nan
     klasirane_2024_4_clean["Класиране"] = '4'
+    klasirane_2024_4_clean["Класиране"] = klasirane_2024_4_clean["Класиране"].astype(int)
     # mesta_2024_4_clean = mesta_2024_4.drop(mesta_2024_4.columns[[0, 2, 4, 5]], axis=1)
     # mesta_2024_4_clean = mesta_2024_4_clean.rename(columns={
     #                            "Unnamed: 1": "Код училище",
@@ -298,6 +301,7 @@ def klasirane_2024_combined_function():
                             'Места_общ_брой_д', 'Класиране', 'Мин_бал_о', 'Мин_бал_м',
                             'Мин_бал_ж', 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']] = np.nan
     mesta_2024_5_clean["Класиране"] = '5'
+    mesta_2024_5_clean["Класиране"] = mesta_2024_5_clean["Класиране"].astype(int)
     # mesta_2024_5_clean = mesta_2024_5.drop(mesta_2024_5.columns[[0, 2, 4, 5, 9]], axis=1)
     # mesta_2024_5_clean = mesta_2024_5_clean.rename(columns={
     #                            "Unnamed: 1": "Код училище",
