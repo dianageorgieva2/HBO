@@ -36,8 +36,8 @@ def klasirane_2024_combined_function():
                                    encoding='utf-8', encoding_errors='ignore')
     klasirane_2024_2 = pd.read_csv('klasirane/2024/min_max_2_klasirane_2024.csv',
                                    encoding='utf-8', encoding_errors='ignore')
-    # klasirane_2024_3 = pd.read_csv('klasirane/2023/min_max_po_paralelki_3_etap_2023 (1).csv',
-    #                                encoding='utf-8', encoding_errors='ignore')
+    klasirane_2024_3 = pd.read_csv('klasirane/2024/min_max_3_klasirane_2024-1.csv',
+                                   encoding='utf-8', encoding_errors='ignore')
     # klasirane_2024_4 = pd.read_csv('klasirane/2023/min_max_po_par_4_etap_2023 (1).csv',
     #                                encoding='utf-8', encoding_errors='ignore')
     kodove_2024 = pd.read_csv('klasirane/2024/za_saita_kodove_baloobr_2024_2025.csv',
@@ -109,6 +109,14 @@ def klasirane_2024_combined_function():
                                                      'Места_м', 'Места_д', 'Места_общ_брой', 'Места_общ_брой_м',
                                                      'Места_общ_брой_д', 'Класиране', 'Мин_бал_о', 'Мин_бал_м',
                                                      'Мин_бал_ж', 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']]
+
+    # print(klasirane_2024_1_clean['Код училище'].apply(type).value_counts())
+    # float_records = klasirane_2024_1_clean[
+    #     klasirane_2024_1_clean['Код училище'].apply(lambda x: isinstance(x, float))]
+    # print(float_records)
+    # int_records = klasirane_2024_1_clean[
+    #     klasirane_2024_1_clean['Код училище'].apply(lambda x: isinstance(x, int))]
+    # print(int_records)
     # print(f'Klasirane 1: {klasirane_2024_1_clean.shape}')
 
     # # Find and print items that are in kodove_set but not in klasirane_set
@@ -212,30 +220,30 @@ def klasirane_2024_combined_function():
     mesta_2024_3_clean.reset_index(drop=True, inplace=True)
     mesta_2024_3_clean.index = klasirane_2024_1_clean.index
 
-    # To be deleted after mesta data is availablle.
-    # klasirane_2024_3_clean = klasirane_2024_1_clean[['Район', 'Училище', 'Код паралелка', 'Паралелка',
-    #                                                  'Вид на паралелката',
-    #                                                  'Балообразуване', 'Форма на обучение', 'Брой паралелки', 'Година',
-    #                                                  'Код училище']]
-    # To be deleted after klasiraane data is availablle.
-    klasirane_2024_3_clean = klasirane_2024_1_clean[['Код паралелка']]
-    klasirane_2024_3_clean.loc[:, ['Мин_бал_о', 'Мин_бал_м', 'Мин_бал_ж', 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']] = np.nan
+    # # To be deleted after mesta data is availablle.
+    # # klasirane_2024_3_clean = klasirane_2024_1_clean[['Район', 'Училище', 'Код паралелка', 'Паралелка',
+    # #                                                  'Вид на паралелката',
+    # #                                                  'Балообразуване', 'Форма на обучение', 'Брой паралелки', 'Година',
+    # #                                                  'Код училище']]
+    # # To be deleted after klasiraane data is availablle.
+    # klasirane_2024_3_clean = klasirane_2024_1_clean[['Код паралелка']]
+    # klasirane_2024_3_clean.loc[:, ['Мин_бал_о', 'Мин_бал_м', 'Мин_бал_ж', 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']] = np.nan
 
-    # klasirane_2024_3_clean = klasirane_2024_3.rename(columns={
-    #                            "Unnamed: 3": "Код паралелка",
-    #                            "Unnamed: 6": "Мин_бал_о",
-    #                            "Unnamed: 7": "Мин_бал_м",
-    #                            "Unnamed: 8": "Мин_бал_ж",
-    #                            "Unnamed: 9": "Макс_бал_о",
-    #                            "Unnamed: 10": "Макс_бал_м",
-    #                            "Unnamed: 11": "Макс_бал_ж"})
-    # klasirane_2024_3_clean = klasirane_2024_3_clean.drop(klasirane_2024_3_clean.columns[[0, 1, 2, 4, 5]], axis=1)
-    # klasirane_2024_3_clean = klasirane_2024_3_clean.drop([0, 1, 2, 3], axis=0)
-    # klasirane_2024_3_clean = klasirane_2024_3_clean[klasirane_2024_3_clean["Код паралелка"].notna()]
-    # klasirane_2024_3_clean = klasirane_2024_3_clean.fillna(0)
-    # klasirane_2024_3_clean[["Мин_бал_о", "Мин_бал_м", "Мин_бал_ж", 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']] = \
-    #     klasirane_2024_3_clean[["Мин_бал_о", "Мин_бал_м", "Мин_бал_ж", 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']].\
-    #     astype(float)
+    klasirane_2024_3_clean = klasirane_2024_3.rename(columns={
+                               "Unnamed: 3": "Код паралелка",
+                               "Unnamed: 5": "Мин_бал_о",
+                               "Unnamed: 6": "Мин_бал_м",
+                               "Unnamed: 7": "Мин_бал_ж",
+                               "Unnamed: 8": "Макс_бал_о",
+                               "Unnamed: 9": "Макс_бал_м",
+                               "Unnamed: 10": "Макс_бал_ж"})
+    klasirane_2024_3_clean = klasirane_2024_3_clean.drop(klasirane_2024_3_clean.columns[[0, 1, 2, 4]], axis=1)
+    klasirane_2024_3_clean = klasirane_2024_3_clean.drop([0, 1, 2, 3], axis=0)
+    klasirane_2024_3_clean = klasirane_2024_3_clean[klasirane_2024_3_clean["Код паралелка"].notna()]
+    klasirane_2024_3_clean = klasirane_2024_3_clean.fillna(0)
+    klasirane_2024_3_clean[["Мин_бал_о", "Мин_бал_м", "Мин_бал_ж", 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']] = \
+        klasirane_2024_3_clean[["Мин_бал_о", "Мин_бал_м", "Мин_бал_ж", 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']].\
+        astype(float)
     klasirane_2024_3_clean = klasirane_2024_3_clean.sort_values(by='Код паралелка')
     klasirane_2024_3_clean.reset_index(drop=True, inplace=True)
     klasirane_2024_3_clean = pd.merge(mesta_2024_3_clean, klasirane_2024_3_clean, on="Код паралелка", how='outer')
