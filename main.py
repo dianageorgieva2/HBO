@@ -1,5 +1,5 @@
 # INSTRUCTIONS FOR NEW YEAR FILES IMPORT, CLEANING, STANDARTISATION
-# 1. In data_statistika add tats_NEWYEAR_clean
+# 1. In data_statistika add stats_NEWYEAR_clean
 # 2. Import data_klasirane_NEWYEAR
 # 3. Update visio_1 with NEWYEAR
 # 4. Create df_grouped_NEWYEAR and df_grouped_LASTYEAR and add line_LASTYEAR
@@ -7,6 +7,7 @@
 
 import pandas as pd
 import plotly.graph_objects as go
+import numpy as np
 import streamlit
 import streamlit as st
 import plotly.io as pio
@@ -144,7 +145,81 @@ with intro:
 # Create visualization_1 (fig1 and fig2)
 with visio_1:
     col1, col2 = st.columns(2, gap='medium')
-    df_statistika_combined, all_stats_list = all_stats(premium=PREMIUM)
+    df_statistika_combined, df_statistika_grouped, all_stats_list = all_stats(premium=PREMIUM)
+
+    # # NEW Data visualization fig1 NEW
+    # with col2:
+    #     st.markdown("<h3 style='text-align: center;'>НВО Успеваемост</h3>", unsafe_allow_html=True)
+    #     fig = go.Figure()
+    #
+    #     years_expanded_m = np.repeat(df_statistika_combined['Година'].values, df_statistika_combined['общо_м'].values)
+    #     points_expanded_m = np.repeat(df_statistika_combined['ТОЧКИ'].values, df_statistika_combined['общо_м'].values)
+    #     years_expanded_d = np.repeat(df_statistika_combined['Година'].values, df_statistika_combined['общо_д'].values)
+    #     points_expanded_d = np.repeat(df_statistika_combined['ТОЧКИ'].values, df_statistika_combined['общо_д'].values)
+    #
+    #     # First add the violin (no hover)
+    #     fig.add_trace(go.Violin(x=years_expanded_d,
+    #                             y=points_expanded_d,
+    #                             hoverinfo='skip',  # Skip hover for violin
+    #                             side='negative',
+    #                             showlegend=False))
+    #     fig.add_trace(go.Violin(x=years_expanded_m,
+    #                             y=points_expanded_m,
+    #                             hoverinfo='skip',  # Skip hover for violin
+    #                             side='positive',
+    #                             showlegend=False))
+    #
+    #     # Then add scatter points with custom hover
+    #     for year in df_statistika_combined['Година'].unique():
+    #         # Filter data for this specific year
+    #         year_data = df_statistika_combined[df_statistika_combined['Година'] == year]
+    #
+    #         fig.add_trace(go.Scatter(
+    #             x=year_data['Година'],
+    #             y=year_data['ТОЧКИ'],
+    #             mode='markers',
+    #             marker=dict(opacity=0),
+    #             showlegend=False,
+    #             name=str(year),  # Year as the trace name
+    #             customdata=list(zip(year_data['общо_м'], year_data['преди_мен_м'])),
+    #             hovertemplate='%{customdata[0]} момчета + %{customdata[1]} момчета с по-висок бал'
+    #         ))
+    #
+    #         fig.add_trace(go.Scatter(
+    #             x=year_data['Година'],
+    #             y=year_data['ТОЧКИ'],
+    #             mode='markers',
+    #             marker=dict(opacity=0),
+    #             showlegend=False,
+    #             name=str(year),  # Year as the trace name
+    #             customdata=list(zip(year_data['общо_д'], year_data['преди_мен_д'])),
+    #             hovertemplate='%{customdata[0]} момичета + %{customdata[1]} момичета с по-висок бал'
+    #         ))
+    #
+    #     fig.update_layout(violingap=0, violinmode='overlay', hovermode='y unified',
+    #                               hoverlabel=dict(font_size=10),
+    #                               paper_bgcolor="rgba(0, 0, 0, 0)",
+    #                               plot_bgcolor="rgba(0, 0, 0, 0)",
+    #                               xaxis=dict(
+    #                                   title='Ученици (бр)',
+    #                                   titlefont_size=14,
+    #                                   tickfont_size=12,
+    #                                   tickangle=-90,
+    #                                   fixedrange=True),
+    #                               yaxis=dict(
+    #                                   title='Точки',
+    #                                   titlefont_size=14,
+    #                                   tickfont_size=12,
+    #                                   fixedrange=True,
+    #                                   showline=False),
+    #                               legend=dict(orientation="h",
+    #                                           yanchor="auto",
+    #                                           y=1.2,
+    #                                           x=1,
+    #                                           xanchor="auto",
+    #                                           title=None))
+    #
+    #     st.plotly_chart(fig, use_container_width=True, config=config)
 
     # Data visualization fig1
     with col2:
@@ -198,21 +273,21 @@ with visio_1:
     with col1:
         st.markdown("<h3 style='text-align: center;'>НВО Статистика</h3>", unsafe_allow_html=True)
         fig2 = go.Figure()
-        bar_trace = go.Bar(x=df_statistika_combined["Година"],
-                           y=df_statistika_combined[y_column],
-                           text=df_statistika_combined[y_column],
+        bar_trace = go.Bar(x=df_statistika_grouped["Година"],
+                           y=df_statistika_grouped[y_column],
+                           text=df_statistika_grouped[y_column],
                            name="Ученици(брой)",
                            textposition="outside",
                            cliponaxis=False,
                            textfont=dict(size=12),
                            hoverinfo=None)
 
-        scatter_trace = go.Scatter(x=df_statistika_combined["Година"],
-                                   y=df_statistika_combined[avg_tochki],
-                                   name="Среден успех(точки)",
+        scatter_trace = go.Scatter(x=df_statistika_grouped["Година"],
+                                   y=df_statistika_grouped[avg_tochki],
+                                   name="Среден успех(точки МАТ+БЕЛ)",
                                    mode='lines+text+markers',
                                    yaxis='y2',
-                                   text=df_statistika_combined[avg_tochki],
+                                   text=df_statistika_grouped[avg_tochki],
                                    textposition="top center",
                                    cliponaxis=False,
                                    textfont=dict(size=14,
@@ -231,8 +306,8 @@ with visio_1:
                 titlefont_size=14,
                 tickfont_size=12,
                 tickmode='array',
-                tickvals=df_statistika_combined.Година,
-                ticktext=df_statistika_combined.Година.astype(str),
+                tickvals=df_statistika_grouped.Година,
+                ticktext=df_statistika_grouped.Година.astype(str),
                 fixedrange=True,),
             yaxis=dict(showticklabels=False, fixedrange=True,),
             yaxis2=dict(
@@ -241,7 +316,7 @@ with visio_1:
                 overlaying='y',
                 side='right',
                 position=1,
-                range=(df_statistika_combined[avg_tochki].min() - 10, df_statistika_combined[avg_tochki].max() + 10),
+                range=(df_statistika_grouped[avg_tochki].min() - 10, df_statistika_grouped[avg_tochki].max() + 10),
                 fixedrange=True,
                 showline=False),
             legend=dict(orientation="h",
@@ -267,7 +342,6 @@ with visio_2:
 
     # Add new year on top of the dictionary
     klasirane_all = [klasirane_2024_combined, klasirane_2023_combined, klasirane_2022_combined, klasirane_2021_combined, klasirane_2020_combined]
-
     #As a new year is added change the attribute of klasirane_all to point to the last one
     # (i.e. in 2025 it will be 4+1=5)
     for df in klasirane_all:
@@ -357,6 +431,7 @@ with visio_2:
 #     })
 #     # print(klasirane_2023_combined[klasirane_2023_combined["Класиране"] == 1].shape)
 #     # print(type(aggregated_df['Мин_бал_о'].iloc[0][0]))  # This should show 'int'
+
 
 # Message functionality and history features
 st.markdown("<h3 style='text-align: center;'>Коментари</h3>", unsafe_allow_html=True)
