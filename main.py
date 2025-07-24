@@ -4,6 +4,7 @@
 # 3. Update visio_1 with NEWYEAR
 # 4. Create df_grouped_NEWYEAR and df_grouped_LASTYEAR and add line_LASTYEAR
 # 5. Update visio_2 with NEWYEAR
+# 6. Update the short text logic to increase with 1 for every new year start
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -12,6 +13,7 @@ import streamlit
 import streamlit as st
 import plotly.io as pio
 from data_statistika import all_stats
+from data_klasirane_2025 import klasirane_2025_combined_function
 from data_klasirane_2024 import klasirane_2024_combined_function
 from data_klasirane_2023 import klasirane_2023_combined_function
 from data_klasirane_2022 import klasirane_2022_combined_function
@@ -174,16 +176,16 @@ with visio_1:
     #         # Filter data for this specific year
     #         year_data = df_statistika_combined[df_statistika_combined['Година'] == year]
     #
-    #         fig.add_trace(go.Scatter(
-    #             x=year_data['Година'],
-    #             y=year_data['ТОЧКИ'],
-    #             mode='markers',
-    #             marker=dict(opacity=0),
-    #             showlegend=False,
-    #             name=str(year),  # Year as the trace name
-    #             customdata=list(zip(year_data['общо_м'], year_data['преди_мен_м'])),
-    #             hovertemplate='%{customdata[0]} момчета + %{customdata[1]} момчета с по-висок бал'
-    #         ))
+    #         # fig.add_trace(go.Scatter(
+    #         #     x=year_data['Година'],
+    #         #     y=year_data['ТОЧКИ'],
+    #         #     mode='markers',
+    #         #     marker=dict(opacity=0),
+    #         #     showlegend=False,
+    #         #     name=str(year),  # Year as the trace name
+    #         #     customdata=list(zip(year_data['общо_м'], year_data['преди_мен_м'])),
+    #         #     hovertemplate='%{customdata[0]} момчета + %{customdata[1]} момчета с по-висок бал'
+    #         # ))
     #
     #         fig.add_trace(go.Scatter(
     #             x=year_data['Година'],
@@ -192,8 +194,12 @@ with visio_1:
     #             marker=dict(opacity=0),
     #             showlegend=False,
     #             name=str(year),  # Year as the trace name
-    #             customdata=list(zip(year_data['общо_д'], year_data['преди_мен_д'])),
-    #             hovertemplate='%{customdata[0]} момичета + %{customdata[1]} момичета с по-висок бал'
+    #             # customdata=list(zip(year_data['общо_д'], year_data['преди_мен_д'])),
+    #             customdata=year_data['общо_д'] + year_data['преди_мен_д'],
+    #             hovertemplate='%{customdata} момичета с => бал'
+    #
+    #             # hovertemplate='%{customdata[0]} момичета + %{customdata[1]} момичета с по-висок бал'
+    #
     #         ))
     #
     #     fig.update_layout(violingap=0, violinmode='overlay', hovermode='y unified',
@@ -334,6 +340,7 @@ visio_2.markdown("<h3 style='text-align: center;'>Класиране - дета�
 
 with visio_2:
     #Add the new year vaariable after importing the new year function
+    klasirane_2025_combined = klasirane_2025_combined_function()
     klasirane_2024_combined = klasirane_2024_combined_function()
     klasirane_2023_combined = klasirane_2023_combined_function()
     klasirane_2022_combined = klasirane_2022_combined_function()
@@ -341,18 +348,17 @@ with visio_2:
     klasirane_2020_combined = klasirane_2020_combined_function()
 
     # Add new year on top of the dictionary
-    klasirane_all = [klasirane_2024_combined, klasirane_2023_combined, klasirane_2022_combined, klasirane_2021_combined, klasirane_2020_combined]
+    klasirane_all = [klasirane_2025_combined, klasirane_2024_combined, klasirane_2023_combined, klasirane_2022_combined, klasirane_2021_combined, klasirane_2020_combined]
     #As a new year is added change the attribute of klasirane_all to point to the last one
     # (i.e. in 2025 it will be 4+1=5)
     for df in klasirane_all:
         for uchilishte_code in df['Код училище']:
-            if uchilishte_code in klasirane_all[4]['Код училище'].values:
+            if uchilishte_code in klasirane_all[5]['Код училище'].values:
                 df.loc[df['Код училище'] == uchilishte_code, 'Училище_short'] = \
-                    klasirane_all[4].loc[klasirane_all[4]['Код училище'] == uchilishte_code, 'Училище_формат'].values[0]
+                    klasirane_all[5].loc[klasirane_all[5]['Код училище'] == uchilishte_code, 'Училище_формат'].values[0]
             else:
                 df.loc[df['Код училище'] == uchilishte_code, 'Училище_short'] = \
                     df.loc[df['Код училище'] == uchilishte_code, 'Училище_формат'].values
-
 
     def button_function_mobile(year_label, klasirane_combined_df):
         fig3_visualization(klasirane_combined=klasirane_combined_df,
@@ -369,8 +375,19 @@ with visio_2:
                            mobile=False,
                            year=year_label)
 
-    radio_button = visio_2.radio(label=' ', options=['2024', '2023', '2022', '2021', '2020'], horizontal=True)
+    radio_button = visio_2.radio(label=' ', options=['2025', '2024', '2023', '2022', '2021', '2020'], horizontal=True)
     # Add the new year to the radio button options and extend the functionality below when selected
+    if radio_button == '2025':
+        # if not PREMIUM:
+        #     st.write('Регисттрирай се за данните от 2025г.')
+        # else:
+        #     st.write('В очакване на 1во класиране')
+
+        if mobile_toggle:
+            button_function_mobile(year_label=2025, klasirane_combined_df=klasirane_2025_combined)
+        else:
+            button_function(year_label=2025, klasirane_combined_df=klasirane_2025_combined)
+
     if radio_button == '2024':
         # if not PREMIUM:
         #     st.write('Регисттрирай се за данните от 2024г.')
