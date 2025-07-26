@@ -1,7 +1,7 @@
 # INSTRUCTIONS FOR NEW YEAR FILES IMPORT, CLEANING, STANDARTISATION
 # 1. Copy data_klasirane_LAST YEAR into a new py file
 # 2. Import correct files from the respective folder
-# 3. Replace YEAR with the year you want everywhere
+# 3. Replace YEAR with the year you want everywhere, including in basic_data variable
 # 4. Check if difference in records in the 3 klasirane and mesta and add the difference as needed
 # to the highest possible
 # 5. Activate the print function in the code
@@ -26,8 +26,8 @@ pd.options.display.float_format = '{:,.2f}'.format
 @st.cache_data()
 def klasirane_2025_combined_function():
     # Data import
-    # mesta_2024_3 = pd.read_csv('klasirane/2024/svobodni_mesta_za_3_etap_2024.csv',
-    #                            encoding='utf-8', encoding_errors='ignore')
+    mesta_2025_3 = pd.read_csv('klasirane/2025/sv_mesta_3_klasirane_8_klas_2025 (1).csv',
+                               encoding='utf-8', encoding_errors='ignore')
     # mesta_2024_4 = pd.read_csv('klasirane/2024/svobodni_mesta_za_4_etap_2024.csv',
     #                            encoding='utf-8', encoding_errors='ignore')
     # mesta_2024_5 = pd.read_csv('klasirane/2024/svobodni_mesta_SLED_4_etap_2024.csv',
@@ -74,9 +74,11 @@ def klasirane_2025_combined_function():
             kodove_2025_clean.at[index, 'Код паралелка'] = f'0{c}'
     # print(f'Kodove: {kodove_2025_clean.shape}')
 
-    kodove_2025_clean = kodove_2025_clean[['Район', 'Училище', 'Код паралелка', 'Паралелка', 'Вид на паралелката',
-                                         'Балообразуване', 'Форма на обучение', 'Брой паралелки', 'Година', 'Места_о',
-                                        'Места_м', 'Места_д', 'Места_общ_брой', 'Места_общ_брой_м', 'Места_общ_брой_д']]
+    basic_data_2025 = kodove_2025_clean[['Район', 'Училище', 'Код паралелка', 'Паралелка', 'Вид на паралелката',
+                                         'Балообразуване', 'Форма на обучение', 'Брой паралелки', 'Година',
+                                         # 'Места_о', 'Места_м', 'Места_д', 'Места_общ_брой', 'Места_общ_брой_м',
+                                         # 'Места_общ_брой_д'
+                                         ]]
 
     # KLASIRANE 1
     klasirane_2025_1_clean = klasirane_2025_1.rename(columns={
@@ -161,63 +163,65 @@ def klasirane_2025_combined_function():
                                                      'Места_общ_брой_д', 'Класиране', 'Мин_бал_о', 'Мин_бал_м',
                                                      'Мин_бал_ж', 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']]
     # print(f'Klasirane 2: {klasirane_2025_2_clean.shape}')
-    #
+
     # KLASIRANE 3
     # Only a temporary set-up to show all cycles and make the graph readable.
     # # To be deleted after klasirane data is availablle.
-    klasirane_2025_3_clean = klasirane_2025_1_clean[['Район', 'Училище', 'Код паралелка', 'Паралелка',
-                                                     'Вид на паралелката',
-                                                     'Балообразуване', 'Форма на обучение', 'Брой паралелки', 'Година',
-                                                     'Код училище']]
-    klasirane_2025_3_clean.loc[:, ['Места_о', 'Места_м', 'Места_д', 'Места_общ_брой', 'Места_общ_брой_м',
-                            'Места_общ_брой_д', 'Класиране', 'Мин_бал_о', 'Мин_бал_м',
-                            'Мин_бал_ж', 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']] = np.nan
-    klasirane_2025_3_clean["Класиране"] = '3'
-    klasirane_2025_3_clean["Класиране"] = klasirane_2025_3_clean["Класиране"].astype(int)
+    # klasirane_2025_3_clean = klasirane_2025_1_clean[['Район', 'Училище', 'Код паралелка', 'Паралелка',
+    #                                                  'Вид на паралелката',
+    #                                                  'Балообразуване', 'Форма на обучение', 'Брой паралелки', 'Година',
+    #                                                  'Код училище']]
+    # klasirane_2025_3_clean.loc[:, ['Места_о', 'Места_м', 'Места_д', 'Места_общ_брой', 'Места_общ_брой_м',
+    #                         'Места_общ_брой_д', 'Класиране', 'Мин_бал_о', 'Мин_бал_м',
+    #                         'Мин_бал_ж', 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']] = np.nan
+    # klasirane_2025_3_clean["Класиране"] = '3'
+    # klasirane_2025_3_clean["Класиране"] = klasirane_2025_3_clean["Класиране"].astype(int)
     #
-    # mesta_2024_3_clean = mesta_2024_3.drop(mesta_2024_3.columns[[0, 2, 4, 5, 9]], axis=1)
-    # mesta_2024_3_clean = mesta_2024_3_clean.rename(columns={
-    #                            "Unnamed: 1": "Код училище",
-    #                            "Unnamed: 3": "Код паралелка",
-    #                            "Unnamed: 6": "Места_о",
-    #                            "Unnamed: 7": "Места_м",
-    #                            "Unnamed: 8": "Места_д"})
-    #
-    # mesta_2024_3_clean = mesta_2024_3_clean[mesta_2024_3_clean["Код паралелка"].notna()]
-    # mesta_2024_3_clean = mesta_2024_3_clean.drop([1, 2], axis=0)
-    # mesta_2024_3_clean = mesta_2024_3_clean.fillna(0)
-    # mesta_2024_3_clean[["Места_о", "Места_м", "Места_д"]] = mesta_2024_3_clean[["Места_о", "Места_м", "Места_д"]].\
-    #     replace('-', 0)
-    # mesta_2024_3_clean[["Места_о", "Места_м", "Места_д"]] = mesta_2024_3_clean[["Места_о", "Места_м", "Места_д"]].\
-    #     astype(int)
-    # mesta_2024_3_clean['Места_общ_брой'] = mesta_2024_3_clean[["Места_о", "Места_м", "Места_д"]].sum(axis=1)
-    # mesta_2024_3_clean['Места_общ_брой_м'] = mesta_2024_3_clean[["Места_о", "Места_м"]].sum(axis=1)
-    # mesta_2024_3_clean['Места_общ_брой_д'] = mesta_2024_3_clean[["Места_о", "Места_д"]].sum(axis=1)
+    mesta_2025_3_clean = mesta_2025_3.drop(mesta_2025_3.columns[[0, 2, 4, 8]], axis=1)
+    mesta_2025_3_clean = mesta_2025_3_clean.rename(columns={
+                               "Unnamed: 1": "Код училище",
+                               "Unnamed: 3": "Код паралелка",
+                               "Unnamed: 5": "Места_о",
+                               "Unnamed: 6": "Места_м",
+                               "Unnamed: 7": "Места_д"})
+    mesta_2025_3_clean = mesta_2025_3_clean[mesta_2025_3_clean["Код паралелка"].notna()]
+    mesta_2025_3_clean = mesta_2025_3_clean.drop([2, 3], axis=0)
+    mesta_2025_3_clean = mesta_2025_3_clean.fillna(0)
+    mesta_2025_3_clean[["Места_о", "Места_м", "Места_д"]] = mesta_2025_3_clean[["Места_о", "Места_м", "Места_д"]].\
+        replace('-', 0)
+    mesta_2025_3_clean[["Места_о", "Места_м", "Места_д"]] = mesta_2025_3_clean[["Места_о", "Места_м", "Места_д"]].\
+        astype(int)
+    mesta_2025_3_clean['Места_общ_брой'] = mesta_2025_3_clean[["Места_о", "Места_м", "Места_д"]].sum(axis=1)
+    mesta_2025_3_clean['Места_общ_брой_м'] = mesta_2025_3_clean[["Места_о", "Места_м"]].sum(axis=1)
+    mesta_2025_3_clean['Места_общ_брой_д'] = mesta_2025_3_clean[["Места_о", "Места_д"]].sum(axis=1)
+
     # # Special fix for 2024 to adjust 'Код паралелка' by adding the leading 0
-    # for index, c in mesta_2024_3_clean['Код паралелка'].items():
+    # for index, c in mesta_2025_3_clean['Код паралелка'].items():
     #     if len(c) == 3:
-    #         mesta_2024_3_clean.at[index, 'Код паралелка'] = f'0{c}'
-    # # print(f'Kodove_mesta: {mesta_2024_3_clean.shape}')
-    #
-    # mesta_2024_3_clean = pd.merge(basic_data_2024, mesta_2024_3_clean, on="Код паралелка", how='outer')
-    # mesta_2024_3_clean[["Места_о", "Места_м", "Места_д", 'Места_общ_брой', 'Места_общ_брой_м', 'Места_общ_брой_д']] = \
-    #     mesta_2024_3_clean[["Места_о", "Места_м", "Места_д", 'Места_общ_брой', 'Места_общ_брой_м',
-    #                         'Места_общ_брой_д']].apply(pd.to_numeric, errors='coerce').astype("Int64")
-    # mesta_2024_3_clean["Класиране"] = 3
-    # mesta_2024_3_clean["Класиране"] = mesta_2024_3_clean["Класиране"].astype(int)
-    # mesta_2024_3_clean = mesta_2024_3_clean.sort_values(by='Код паралелка')
-    # mesta_2024_3_clean.reset_index(drop=True, inplace=True)
-    # mesta_2024_3_clean.index = klasirane_2024_1_clean.index
+    #         mesta_2025_3_clean.at[index, 'Код паралелка'] = f'0{c}'
+    # print(f'Kodove_mesta: {mesta_2025_3_clean.shape}')
+
+    mesta_2025_3_clean = pd.merge(basic_data_2025, mesta_2025_3_clean, on="Код паралелка", how='outer')
+    mesta_2025_3_clean[["Места_о", "Места_м", "Места_д", 'Места_общ_брой', 'Места_общ_брой_м', 'Места_общ_брой_д']] = \
+        mesta_2025_3_clean[["Места_о", "Места_м", "Места_д", 'Места_общ_брой', 'Места_общ_брой_м',
+                            'Места_общ_брой_д']].apply(pd.to_numeric, errors='coerce').astype("Int64")
+    mesta_2025_3_clean["Класиране"] = 3
+    mesta_2025_3_clean["Класиране"] = mesta_2025_3_clean["Класиране"].astype(int)
+    mesta_2025_3_clean = mesta_2025_3_clean.sort_values(by='Код паралелка')
+    mesta_2025_3_clean.reset_index(drop=True, inplace=True)
+    mesta_2025_3_clean.index = klasirane_2025_1_clean.index
+
     #
     # # To be deleted after mesta data is availablle.
     # klasirane_2025_3_clean = klasirane_2025_1_clean[['Район', 'Училище', 'Код паралелка', 'Паралелка',
     #                                                  'Вид на паралелката',
     #                                                  'Балообразуване', 'Форма на обучение', 'Брой паралелки', 'Година',
     #                                                  'Код училище']]
-    # # To be deleted after klasiraane data is availablle.
-    # klasirane_2025_3_clean = klasirane_2025_1_clean[['Код паралелка']]
-    # klasirane_2025_3_clean.loc[:, ['Мин_бал_о', 'Мин_бал_м', 'Мин_бал_ж', 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']] = np.nan
-    #
+    # To be deleted after klasiraane data is availablle.
+    klasirane_2025_3_clean = klasirane_2025_1_clean[['Код паралелка']]
+    klasirane_2025_3_clean.loc[:, ['Мин_бал_о', 'Мин_бал_м', 'Мин_бал_ж', 'Макс_бал_о', 'Макс_бал_м', 'Макс_бал_ж']] = np.nan
+
+
     # klasirane_2024_3_clean = klasirane_2024_3.rename(columns={
     #                            "Unnamed: 3": "Код паралелка",
     #                            "Unnamed: 5": "Мин_бал_о",
@@ -235,12 +239,19 @@ def klasirane_2025_combined_function():
     #     astype(float)
     # klasirane_2024_3_clean = klasirane_2024_3_clean.sort_values(by='Код паралелка')
     # klasirane_2024_3_clean.reset_index(drop=True, inplace=True)
-    # klasirane_2024_3_clean = pd.merge(mesta_2024_3_clean, klasirane_2024_3_clean, on="Код паралелка", how='outer')
-    # klasirane_2024_3_clean = klasirane_2024_3_clean.fillna(0)
-    # klasirane_2024_3_clean = klasirane_2024_3_clean.sort_values(by='Код паралелка')
-    # klasirane_2024_3_clean.reset_index(drop=True, inplace=True)
-    # klasirane_2024_3_clean.index = klasirane_2024_1_clean.index
-    # # print(f'Klasirane 3: {klasirane_2024_3_clean.shape}')
+    klasirane_2025_3_clean = pd.merge(mesta_2025_3_clean, klasirane_2025_3_clean, on="Код паралелка", how='outer')
+    klasirane_2025_3_clean = klasirane_2025_3_clean.fillna(0)
+    klasirane_2025_3_clean = klasirane_2025_3_clean.sort_values(by='Код паралелка')
+    klasirane_2025_3_clean.reset_index(drop=True, inplace=True)
+    klasirane_2025_3_clean.index = klasirane_2025_1_clean.index
+    # print(f'Klasirane 3: {klasirane_2025_3_clean.shape}')
+
+    # # TEST TEST TEST
+    # klasirane_test = pd.merge(mesta_2025_3_clean, klasirane_2025_2_clean, on="Код паралелка", how='outer')
+    # klasirane_test = klasirane_test.fillna(0)
+    # klasirane_test = klasirane_test.sort_values(by='Код паралелка')
+    # klasirane_test.reset_index(drop=True, inplace=True)
+    # klasirane_test.index = klasirane_2025_1_clean.index
     #
     # # KLASIRANE 4
     # Only a temporary set-up to show all cycles and make the graph readable.
@@ -372,7 +383,7 @@ def klasirane_2025_combined_function():
                                          ],
                                         axis=0)
     klasirane_2025_combined.reset_index(drop=True, inplace=True)
-    #
+
     klasirane_2025_combined['Паралелка_формат'] = klasirane_2025_combined['Паралелка']
     #
     # klasirane_2024_combined.loc[klasirane_2024_combined['Профил_1'].str.startswith("Чужди езици"), 'Профил_1'] = \
@@ -552,5 +563,3 @@ def klasirane_2025_combined_function():
     # result = pd.concat(all_data_check, axis=1, ignore_index=True)
     # # # print(result)
     return klasirane_2025_combined
-
-
